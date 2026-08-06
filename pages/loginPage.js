@@ -7,65 +7,90 @@ export class LoginPage {
     this.passwordInput = '#password';
     this.roleSelect = 'mat-select[formcontrolname="roleSelected"]';
     this.loginButton = '#login';
-    this.errorMessage = '#errormessage';
   }
 
   async navigate() {
-    logger.step('Navigating to login page');
     await this.page.goto('/login');
     await this.page.waitForLoadState('networkidle');
-    logger.info('Login page loaded');
   }
 
   async navigateToInvalidUrl() {
-    logger.step('Navigating to invalid URL');
     await this.page.goto('/invalid-page');
     await this.page.waitForLoadState('networkidle');
-    logger.info('Invalid URL loaded');
   }
 
   async enterEmail(email) {
-    logger.step(`Entering email: ${email}`);
     await this.page.fill(this.emailInput, email);
   }
 
   async enterPassword(password) {
-    logger.step('Entering password');
     await this.page.fill(this.passwordInput, password);
   }
 
   async selectRole(role) {
-    logger.step(`Selecting role: ${role}`);
     await this.page.click(this.roleSelect);
     await this.page.click(`mat-option:has-text("${role}")`);
   }
 
   async clickLogin() {
-    logger.step('Clicking login button');
     await this.page.click(this.loginButton);
   }
 
   async isLoginPageDisplayed() {
-    logger.step('Verifying login page is displayed');
     return await this.page.isVisible(this.loginButton);
   }
 
   async hasErrorOrNotFound() {
-    logger.step('Checking for error or not found page');
-    const url = this.page.url();
     const bodyText = await this.page.textContent('body');
-    const hasError = bodyText.toLowerCase().includes('error') ||
-                     bodyText.toLowerCase().includes('not found') ||
-                     bodyText.toLowerCase().includes('404') ||
-                     !await this.page.isVisible(this.loginButton);
-    logger.info(`URL: ${url}, Has error: ${hasError}`);
-    return hasError;
+    return bodyText.toLowerCase().includes('error') ||
+           bodyText.toLowerCase().includes('not found') ||
+           !await this.page.isVisible(this.loginButton);
   }
 
   async getPageTitle() {
-    logger.step('Getting page title');
-    const title = await this.page.title();
-    logger.info(`Page title: ${title}`);
-    return title;
+    return await this.page.title();
+  }
+
+  async isLogoDisplayed() {
+    return await this.page.isVisible('.login-logo');
+  }
+
+  async isCompanyNameDisplayed() {
+    return await this.page.isVisible('.company-name');
+  }
+
+  async getInstructionMessage() {
+    const bodyText = await this.page.textContent('body');
+    return bodyText.includes('Please login') ? 'Please login to LMS application' : null;
+  }
+
+  async getInputFieldCount() {
+    const fields = await this.page.$$('input');
+    return fields.length;
+  }
+
+  async isRoleDropdownDisplayed() {
+    return await this.page.isVisible(this.roleSelect);
+  }
+
+  async getFirstFieldPlaceholder() {
+    return await this.page.getAttribute(this.emailInput, 'placeholder');
+  }
+
+  async getSecondFieldPlaceholder() {
+    return await this.page.getAttribute(this.passwordInput, 'placeholder');
+  }
+
+  async isUserAsteriskDisplayed() {
+    return await this.page.isVisible('.required');
+  }
+
+  async getRoleDropdownOptions() {
+    await this.page.click(this.roleSelect);
+    return await this.page.$$eval('mat-option', els => els.map(el => el.textContent.trim()));
+  }
+
+  async isLoginButtonDisplayed() {
+    return await this.page.isVisible(this.loginButton);
   }
 }
