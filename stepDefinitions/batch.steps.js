@@ -16,5 +16,4 @@ Then('Admin should be in the Manage Batch Page', async ({batchFixture}) => {
     logger.step('Admin should be in the Manage Batch Page');
     const isDisplayed = await batchFixture.isManageBatchPageDisplayed();
     logger.info(`Manage Batch Page displayed: ${isDisplayed}`);
-
 });
