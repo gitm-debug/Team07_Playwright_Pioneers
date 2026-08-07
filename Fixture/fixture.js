@@ -1,14 +1,12 @@
+
+
 import { test as base, createBdd } from 'playwright-bdd';
 import { LoginPage } from '../pages/loginPage.js';
 import { BatchPage } from '../pages/batchPage.js';
 import fs from 'fs';
-
 const AUTH_FILE = 'playwright/.auth/user.json';
-
 export const test = base.extend({
-
-  authenticatedPage : async ({ page }, use) => {
-
+  Page : async ({ page }, use) => {
     if (fs.existsSync(AUTH_FILE)) {
       const saved = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
       if (saved.sessionStorage) {
@@ -19,10 +17,8 @@ export const test = base.extend({
         }, saved.sessionStorage);
       }
     }
-
     await use(page);
   },
-
   loginFixture: async ({ page }, use) => {
     await use(new LoginPage(page));
   },
@@ -30,5 +26,4 @@ export const test = base.extend({
     await use(new BatchPage(page));
   },
 });
-
 export const { Given, When, Then, BeforeAll, AfterAll, Before, After } = createBdd(test);

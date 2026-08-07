@@ -1,10 +1,10 @@
 import fs from 'fs';
 
 export default async function globalTeardown() {
-  const authFile = 'playwright/.auth/user.json';
-  if (fs.existsSync(authFile)) {
-    fs.unlinkSync(authFile);
-    console.log('Auth file cleaned up');
+  // Only clean up playwright-report (not test-results, needed for videos/screenshots)
+  const dir = 'playwright-report';
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
   }
-  console.log('All tests completed');
+  console.log('Global teardown completed');
 }
