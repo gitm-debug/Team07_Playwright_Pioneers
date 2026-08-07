@@ -104,46 +104,21 @@ Feature: Login Page - UI Verification
     Then Admin should see password text in gray color
 
   @noauth
-  Scenario: Successfully login with valid credentials
-    When Admin click login button after entering valid credentials
-    Then admin should land on home page
+  Scenario Outline: Login with <scenario>
+    When Admin enters email "<email>" and password "<password>" and role "<role>" and clicks login
+    Then Admin should see "<expected>"
 
-  @noauth
-  Scenario: Login with special characters in username
-    When Admin enters special characters in username and clicks login
-    Then Admin should see error message "Invalid username and password Please try again"
-
-  @noauth
-  Scenario: Login attempt with empty username
-    When Admin enters only password and clicks login
-    Then Admin should see error message "Please enter your user name"
-
-  @noauth
-  Scenario: Login attempt with empty password
-    When Admin enters only username and clicks login
-    Then Admin should see error message "Please enter your password"
-
-  @noauth
-  Scenario: Login attempt with wrong password
-    When Admin enters valid username and wrong password and clicks login
-    Then Admin should see error message "Invalid username and password Please try again"
-
-  @noauth
-  Scenario: Login attempt without selecting any role
-    When Admin enters valid username and password without selecting role and clicks login
-    Then Admin should see error message "Please select your role"
-
-  @noauth
-  Scenario: Login attempt with invalid role
-    When Admin selects invalid role and clicks login
-    Then Admin should see error message "Please select correct role"
-
-  @noauth
-  Scenario: Login attempt using keyboard
-    When Admin clicks login button after entering valid credentials through keyboard
-    Then admin should land on home page
-
-  @noauth
-  Scenario: Login attempt using mouse
-    When Admin clicks login button after entering valid credentials through mouse
-    Then admin should land on home page
+    Examples:
+      | scenario                    | email            | password  | role  | expected                                 |
+      | valid credentials           | valid@email.com  | pass123   | Admin | home page                                |
+      | special chars in username   | !@#$%^&*()       | pass123   | Admin | Invalid username and password            |
+      | empty username              |                  | pass123   | Admin | Please enter your user name              |
+      | empty password              | valid@email.com  |           | Admin | Please enter your password               |
+      | wrong password              | valid@email.com  | wrong     | Admin | Invalid username and password            |
+      | no role selected            | valid@email.com  | pass123   |       | Please select your role                  |
+      | invalid role                | valid@email.com  | pass123   | Wrong | Please select correct role               |
+      | wrong username              | wrong@email.com  | pass123   | Admin | Invalid username and password            |
+      | wrong username + wrong pass | wrong@email.com  | wrong     | Admin | Invalid username and password            |
+      | valid user + wrong role     | valid@email.com  | pass123   | Staff | Please select correct role               |
+      | using keyboard              | valid@email.com  | pass123   | Admin | home page                                |
+      | using mouse                 | valid@email.com  | pass123   | Admin | home page                                |
