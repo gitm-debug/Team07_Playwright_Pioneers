@@ -1,4 +1,4 @@
-import { Given, When, Then } from '../Fixture/base.js';
+import { Given, When, Then } from '../Fixture/fixture.js';
 
 Given('Admin is on the browser', async ({ page }) => {
   // Browser is ready
@@ -126,4 +126,46 @@ Then('admin should land on home page', async ({ page }) => {
   console.log(`Current URL: ${page.url()}`);
   const isLoginPageGone = !page.url().includes('/login');
   console.log(`Login page gone: ${isLoginPageGone}`);
+});
+
+When('Admin enters special characters in username and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithSpecialCharUsername();
+});
+
+When('Admin enters only password and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithEmptyUsername();
+});
+
+When('Admin enters only username and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithEmptyPassword();
+});
+
+When('Admin enters valid username and wrong password and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithWrongPassword();
+});
+
+When('Admin enters valid username and password without selecting role and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithoutRole();
+});
+
+When('Admin selects invalid role and clicks login', async ({ loginFixture }) => {
+  await loginFixture.loginWithInvalidRole();
+});
+
+When('Admin clicks login button after entering valid credentials through keyboard', async ({ loginFixture }) => {
+  await loginFixture.loginUsingKeyboard();
+  await loginFixture.page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+  await loginFixture.page.waitForLoadState('networkidle');
+});
+
+When('Admin clicks login button after entering valid credentials through mouse', async ({ loginFixture }) => {
+  await loginFixture.loginUsingMouse();
+  await loginFixture.page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+  await loginFixture.page.waitForLoadState('networkidle');
+});
+
+Then('Admin should see error message {string}', async ({ loginFixture }, expectedMessage) => {
+  const bodyText = await loginFixture.page.textContent('body');
+  const isDisplayed = bodyText.includes(expectedMessage);
+  console.log(`Error message "${expectedMessage}" displayed: ${isDisplayed}`);
 });

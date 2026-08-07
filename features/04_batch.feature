@@ -7,3 +7,4 @@ Background:	Admin is logged in to LMS Portal
 Scenario: Admin navigates to Batch page
   When Admin clicks Batch on the navigation bar
   Then Admin should be in the Manage Batch Page
+  

@@ -7,7 +7,7 @@ dotenv.config({ path: path.resolve('.env') });
 
 const testDir = defineBddConfig({
   features: 'features/*.feature',
-  steps: ['stepDefinitions/*.js', 'Fixture/base.js'],
+  steps: ['stepDefinitions/*.js', 'Fixture/fixture.js'],
 });
 
 export default defineConfig({
@@ -23,9 +23,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.BASE_URL,
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     trace: 'on-first-retry',
-    video: 'retain-on-failure',
+    video: 'on',
     actionTimeout: 30000,
     navigationTimeout: 60000,
   },
