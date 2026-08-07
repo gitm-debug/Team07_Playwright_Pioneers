@@ -5,38 +5,53 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve('.env') });
 
-export const AUTH_FILE = 'playwright/.auth/user.json';
-
 const testDir = defineBddConfig({
   features: 'features/*.feature',
-  steps: ['stepDefinitions/*.js', 'Fixture/base.js'],
+  steps: ['stepDefinitions/*.js', 'Fixture/fixture.js'],
 });
 
 export default defineConfig({
-  globalSetup: './global-setup.js',
-  globalTeardown: './global-teardown.js',
   testDir,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
+  globalTeardown: './global-teardown.js',
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
   ],
   use: {
     baseURL: process.env.BASE_URL,
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     trace: 'on-first-retry',
-    video: 'retain-on-failure',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    video: 'on',
+    actionTimeout: 30000,
+    navigationTimeout: 60000,
   },
   outputDir: './test-results',
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: AUTH_FILE },
+      name: 'setup-user',
+      testDir: './auth',
+      testMatch: 'user.setup.js',
+      timeout: 120000,
+    },
+    {
+      name: 'chromium-auth',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup-user'],
+      grep: /@auth/,
+    },
+    {
+      name: 'chromium-noauth',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      grep: /@noauth/,
     },
   ],
 });

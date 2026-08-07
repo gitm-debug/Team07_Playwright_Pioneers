@@ -2,8 +2,8 @@
 export class BatchPage {
   constructor(page) {
     this.page = page;
-    this.batchPageHeader = page.locator("getByText('Batches')");
-    this.manageBatchPageHeader = page.locator("getByText('Manage Batch')");
+    this.batchPageHeader = page.getByText('Batches');
+    this.manageBatchPageHeader = page.getByText('Manage Batch');
   }
 
   async clickBatchPageHeader() {

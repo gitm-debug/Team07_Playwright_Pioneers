@@ -1,4 +1,4 @@
-# @batchPage
+@auth
 Feature: Batch Page UI
 Background:	Admin is logged in to LMS Portal
   Given Admin is on home page after login
