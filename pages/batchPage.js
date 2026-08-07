@@ -4,6 +4,9 @@ export class BatchPage {
     this.page = page;
     this.batchPageHeader = page.getByText('Batches');
     this.manageBatchPageHeader = page.getByText('Manage Batch');
+    this.batchTab = page.getByRole('button', { name: 'Batch' });
+    this.batchSubMenu = page.getByRole('menuitem', { name: 'Add New Batch' });
+
   }
 
   async clickBatchPageHeader() {
@@ -11,5 +14,11 @@ export class BatchPage {
   }
   async isManageBatchPageDisplayed() {
     return await this.manageBatchPageHeader.isVisible();
+  }
+  async clickBatchTab() {
+    await this.batchTab.click();
+  }
+  async isBatchSubMenuDisplayed() {
+    return await this.batchSubMenu.isVisible();
   }
 }
