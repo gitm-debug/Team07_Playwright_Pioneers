@@ -103,82 +103,29 @@ export class LoginPage {
     return bodyText;
   }
 
-  async loginWithSpecialCharUsername() {
+  async loginWithCredentials(email, password, role) {
     await this.page.goto('/login');
     await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, '!@#$%^&*()');
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
+    if (email) {
+      await this.page.fill(this.emailInput, email);
+    }
+    if (password) {
+      await this.page.fill(this.passwordInput, password);
+    }
+    if (role) {
+      await this.page.click(this.roleSelect);
+      const option = this.page.locator(`mat-option:has-text("${role}")`);
+      const exists = await option.count();
+      if (exists > 0) {
+        await option.click();
+      } else {
+        await this.page.keyboard.press('Escape');
+      }
+    }
     await this.page.click(this.loginButton);
   }
 
-  async loginWithEmptyUsername() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, '');
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
-    await this.page.click(this.loginButton);
-  }
-
-  async loginWithEmptyPassword() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, '');
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
-    await this.page.click(this.loginButton);
-  }
-
-  async loginWithWrongPassword() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, 'wrongpassword');
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
-    await this.page.click(this.loginButton);
-  }
-
-  async loginWithoutRole() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.loginButton);
-  }
-
-  async loginWithInvalidRole() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.roleSelect);
-    await this.page.keyboard.type('InvalidRole');
-    await this.page.keyboard.press('Escape');
-    await this.page.click(this.loginButton);
-  }
-
-  async loginUsingKeyboard() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
-    await this.page.press(this.loginButton, 'Enter');
-  }
-
-  async loginUsingMouse() {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
-    await this.page.fill(this.emailInput, process.env.EMAIL);
-    await this.page.fill(this.passwordInput, process.env.PASSWORD);
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${process.env.ROLE}")`);
-    await this.page.click(this.loginButton);
+  async waitForLoginResult() {
+    await this.page.waitForTimeout(3000);
   }
 }
