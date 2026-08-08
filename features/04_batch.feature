@@ -36,7 +36,18 @@ Rule: Add new batch - UI validation
 Background: Admin navigates to Manage batch page after logged in
   Given Admin is on the batch page
 
-@addNewBatchPageUI
-Scenario: Batch name field is displayed
+@BatchDetailsDialogBox
+Scenario: Add New Batch dialog is displayed
   When Admin clicks on Add New batch under the batch menu bar
-  Then Admin should see the batch name field
+  Then Admin should see Batch Details dialog box
+
+@batchDetailsFields
+Scenario: Different fields are displayed under Batch Details dialog box
+  When Admin clicks on Add New batch under the batch menu bar
+  Then Admin should see the following fields under Batch Details dialog box
+    | Field Name |
+    | Batch Name |
+    | Description |
+    | Number of Classes |
+    | program name with dropdown |
+    | Status radio buttons |

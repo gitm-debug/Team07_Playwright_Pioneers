@@ -26,7 +26,15 @@ export class BatchPage {
     this.noOfClassesHeaderSortIcon = page.getByRole('columnheader', { name: 'No Of Classes ' }).locator('i');
     this.programNameHeaderSortIcon = page.getByRole('columnheader', { name: 'Program Name ' }).locator('i');
 
+    this.batchDetailsDialog = page.getByText('Batch Details');
     this.batchNameField = page.getByText('Batch Name*');
+    this.descriptionField = page.getByText('Description', { exact: true });
+    this.noOfClassesField = page.getByText('Number of Classes *');
+    this.programNameField = page.getByText('Program Name *');
+    this.dropdownUnderProgramName = page.locator('.p-autocomplete-dropdown');
+    this.statusField = page.getByText('Status : *');
+    this.activeRadioButton = page.locator('.p-radiobutton-box').first();
+    this.inactiveRadioButton = page.locator('div:nth-child(3) > #batchStatus > .p-radiobutton > .p-radiobutton-box');
   }
 
   async clickBatchPageHeader() {
