@@ -114,6 +114,34 @@ When('Admin clicks on Add New batch under the batch menu bar', async ({batchFixt
     await batchFixture.clickAddNewBatchSubMenu();
 });
 
-Then('Admin should see the batch name field', async ({batchFixture}) => {
-    await expect(batchFixture.batchNameField).toBeVisible();
+Then('Admin should see Batch Details dialog box', async ({batchFixture}) => {
+    await expect(batchFixture.batchDetailsDialog).toBeVisible();
+});
+
+Then('Admin should see the following fields under Batch Details dialog box', async ({batchFixture}, dataTable) => {
+    for (const [row] of dataTable.rows()) {
+        const field = row.trim();
+        switch (field) {
+            case 'Batch Name':
+                await expect(batchFixture.batchNameField).toBeVisible();
+                break;
+            case 'Description':
+                await expect(batchFixture.descriptionField).toBeVisible();
+                break;
+            case 'Number of Classes':
+                await expect(batchFixture.noOfClassesField).toBeVisible();
+                break;
+            case 'program name with dropdown':
+                await expect(batchFixture.programNameField).toBeVisible();
+                await expect(batchFixture.dropdownUnderProgramName).toBeVisible();
+                break;
+            case 'Status radio buttons':
+                await expect(batchFixture.statusField).toBeVisible();
+                await expect(batchFixture.activeRadioButton).toBeVisible();
+                await expect(batchFixture.inactiveRadioButton).toBeVisible();
+                break;
+            default:
+                throw new Error(`Unknown field under Batch Details dialog box: ${field}`);
+        }
+    }
 });
