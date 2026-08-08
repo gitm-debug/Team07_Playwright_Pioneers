@@ -13,18 +13,18 @@ export class BatchPage {
     this.lastPageButton = page.locator('button.p-paginator-last');
     this.batchTableRows = page.locator('tbody tr');
     this.editButtons = page.locator('tbody tr button:has(.pi-pencil)');
-    this.batchNameHeader = page.getByRole('columnheader', { name: 'Batch Name ' });
-    this.batchDescriptionHeader = page.getByRole('columnheader', { name: 'Batch Description ' });
-    this.batchStatusHeader = page.getByRole('columnheader', { name: 'Batch Status ' });
-    this.noOfClassesHeader = page.getByRole('columnheader', { name: 'No Of Classes ' });
-    this.programNameHeader = page.getByRole('columnheader', { name: 'Program Name ' });
+    this.batchNameHeader = page.getByRole('columnheader', { name: 'Batch Name' });
+    this.batchDescriptionHeader = page.getByRole('columnheader', { name: 'Batch Description' });
+    this.batchStatusHeader = page.getByRole('columnheader', { name: 'Batch Status' });
+    this.noOfClassesHeader = page.getByRole('columnheader', { name: 'No Of Classes' });
+    this.programNameHeader = page.getByRole('columnheader', { name: 'Program Name' });
     this.editDeleteHeader = page.getByRole('columnheader', { name: 'Edit / Delete' });
     this.checkboxOnHeader = page.getByRole('checkbox').nth(1);
-    this.batchNameHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Name ' }).locator('i');
-    this.batchDescriptionHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Description ' }).locator('i');
-    this.batchStatusHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Status ' }).locator('i');
-    this.noOfClassesHeaderSortIcon = page.getByRole('columnheader', { name: 'No Of Classes ' }).locator('i');
-    this.programNameHeaderSortIcon = page.getByRole('columnheader', { name: 'Program Name ' }).locator('i');
+    this.batchNameHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Name' }).locator('i');
+    this.batchDescriptionHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Description' }).locator('i');
+    this.batchStatusHeaderSortIcon = page.getByRole('columnheader', { name: 'Batch Status' }).locator('i');
+    this.noOfClassesHeaderSortIcon = page.getByRole('columnheader', { name: 'No Of Classes' }).locator('i');
+    this.programNameHeaderSortIcon = page.getByRole('columnheader', { name: 'Program Name' }).locator('i');
 
     this.batchDetailsDialog = page.getByText('Batch Details');
     this.batchNameField = page.getByText('Batch Name*');
@@ -35,30 +35,117 @@ export class BatchPage {
     this.statusField = page.getByText('Status : *');
     this.activeRadioButton = page.locator('.p-radiobutton-box').first();
     this.inactiveRadioButton = page.locator('div:nth-child(3) > #batchStatus > .p-radiobutton > .p-radiobutton-box');
+
+    this.batchNameSortHeader = 'th[psortablecolumn="batchName"]';
+    this.batchDescriptionSortHeader = 'th[psortablecolumn="batchDescription"]';
+    this.batchStatusSortHeader = 'th[psortablecolumn="batchStatus"]';
+    this.batchNoOfClassesSortHeader = 'th[psortablecolumn="batchNoOfClasses"]';
+  }
+
+  async navigate() {
+    await this.page.goto('/batch');
+    await this.page.waitForLoadState('networkidle');
   }
 
   async clickBatchPageHeader() {
     await this.batchPageHeader.click();
   }
+
   async isManageBatchPageDisplayed() {
     return await this.manageBatchPageHeader.isVisible();
   }
+
   async clickBatchTab() {
     await this.batchTab.click();
   }
+
   async isBatchSubMenuDisplayed() {
     return await this.batchSubMenu.isVisible();
   }
+
   async clickAddNewBatchSubMenu() {
     await this.batchSubMenu.click();
   }
+
   getEditButtonForRow(rowIndex) {
     return this.batchTableRows.nth(rowIndex).locator('button:has(.pi-pencil)');
   }
+
   getDeleteButtonForRow(rowIndex) {
     return this.batchTableRows.nth(rowIndex).locator('button:has(.pi-trash)');
   }
+
   getCheckboxForRow(rowIndex) {
     return this.batchTableRows.nth(rowIndex).locator('p-tablecheckbox');
+  }
+
+  async clickBatchNameArrow() {
+    await this.page.click(this.batchNameSortHeader);
+  }
+
+  async clickBatchDescriptionArrow() {
+    await this.page.click(this.batchDescriptionSortHeader);
+  }
+
+  async clickBatchStatusArrow() {
+    await this.page.click(this.batchStatusSortHeader);
+  }
+
+  async clickNoOfClassesArrow() {
+    await this.page.click(this.batchNoOfClassesSortHeader);
+  }
+
+  async getBatchNames() {
+    return await this.page.$$eval('table tbody tr td:nth-child(2)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  async getBatchDescriptions() {
+    return await this.page.$$eval('table tbody tr td:nth-child(3)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  async getBatchStatuses() {
+    return await this.page.$$eval('table tbody tr td:nth-child(4)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  async getNoOfClasses() {
+    return await this.page.$$eval('table tbody tr td:nth-child(5)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  isSortedAscending(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i].localeCompare(arr[i + 1]) > 0) return false;
+    }
+    return true;
+  }
+
+  isSortedDescending(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i].localeCompare(arr[i + 1]) < 0) return false;
+    }
+    return true;
+  }
+
+  isSortedAscendingNumeric(arr) {
+    const nums = arr.map(Number);
+    for (let i = 0; i < nums.length - 1; i++) {
+      if (nums[i] > nums[i + 1]) return false;
+    }
+    return true;
+  }
+
+  isSortedDescendingNumeric(arr) {
+    const nums = arr.map(Number);
+    for (let i = 0; i < nums.length - 1; i++) {
+      if (nums[i] < nums[i + 1]) return false;
+    }
+    return true;
   }
 }

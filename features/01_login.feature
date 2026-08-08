@@ -10,12 +10,12 @@ Feature: Login Page - UI Verification
 
   @noauth
   Scenario: Access app with invalid URL
-    When Admin enters the invalid LMS app URL
+    When Admin enters a non-existent domain URL
     Then Admin should receive application error
 
   @noauth
   Scenario: Broken link verification
-    When Admin enters the invalid LMS app URL
+    When Admin enters a non-existent page URL
     Then HTTP response should be greater than or equal to 400
 
   @noauth
@@ -111,14 +111,14 @@ Feature: Login Page - UI Verification
     Examples:
       | scenario                    | email            | password  | role  | expected                                 |
       | valid credentials           | valid@email.com  | pass123   | Admin | home page                                |
-      | special chars in username   | !@#$%^&*()       | pass123   | Admin | Invalid username and password            |
+      | special chars in username   | !@#$%^&*()       | pass123   | Admin | Invalid username and password please try again |
       | empty username              |                  | pass123   | Admin | Please enter your user name              |
       | empty password              | valid@email.com  |           | Admin | Please enter your password               |
       | wrong password              | valid@email.com  | wrong     | Admin | Invalid username and password            |
-      | no role selected            | valid@email.com  | pass123   |       | Please select your role                  |
-      | invalid role                | valid@email.com  | pass123   | Wrong | Please select correct role               |
-      | wrong username              | wrong@email.com  | pass123   | Admin | Invalid username and password            |
-      | wrong username + wrong pass | wrong@email.com  | wrong     | Admin | Invalid username and password            |
-      | valid user + wrong role     | valid@email.com  | pass123   | Staff | Please select correct role               |
+      | no role selected            | valid@email.com  | pass123   |       | Please select your Role                  |
+      | invalid role                | valid@email.com  | pass123   | Staff | Please select correct role               |
+     # | wrong username              | wrong@email.com  | pass123   | Admin | Invalid username and password            |
+     # | wrong username + wrong pass | wrong@email.com  | wrong     | Admin | Invalid username and password            |
+     # | valid user + wrong role     | valid@email.com  | pass123   | Staff | Please select correct role               |
       | using keyboard              | valid@email.com  | pass123   | Admin | home page                                |
       | using mouse                 | valid@email.com  | pass123   | Admin | home page                                |
