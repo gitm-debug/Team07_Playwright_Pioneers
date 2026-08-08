@@ -3,6 +3,7 @@ Feature: Batch Page UI
 Background:	Admin is logged in to LMS Portal
   Given Admin is on home page after login
 
+Rule: Manage Batch Page - UI validation
 @navigateToBatchPage
 Scenario: Admin navigates to Batch page
   When Admin clicks Batch on the navigation bar
@@ -22,4 +23,20 @@ Scenario: Different elements on Batch page are displayed
    | Element Name         |
    | Manage Batch Page heading      |
    | Delete icon under the header   |
-  
+   | Pagination controls|
+   | edit icon on each row|
+   | delete icon on each row|
+   | checkbox on each row|
+   | datatable headers |
+   | checkbox in datatable header row |
+   | sort icon next to all datatable headers|
+
+Rule: Add new batch - UI validation
+
+Background: Admin navigates to Manage batch page after logged in
+  Given Admin is on the batch page
+
+@addNewBatchPageUI
+Scenario: Batch name field is displayed
+  When Admin clicks on Add New batch under the batch menu bar
+  Then Admin should see the batch name field
