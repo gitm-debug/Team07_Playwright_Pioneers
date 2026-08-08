@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, master, madhuri ]
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   test:
     timeout-minutes: 60
