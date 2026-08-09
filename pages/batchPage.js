@@ -38,6 +38,7 @@ export class BatchPage {
 
     this.batchNamePrefixBox = page.locator('#batchProg');
     this.batchNameSuffixBox = page.getByRole('textbox', { name: 'Batch Name *' });
+    this.batchNameBox = page.locator('#batchName').nth(1);
     this.descriptionTextBox = page.getByRole('textbox', { name: 'Description' });
     this.noOfClassesInputBox = page.getByRole('spinbutton', { name: 'Number of Classes *' });
     this.errorMsgUnderBatchName = page.getByText('This field accept only');

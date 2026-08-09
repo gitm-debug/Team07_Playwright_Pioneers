@@ -220,3 +220,25 @@ When('Admin clicks on close icon on the top right corner of the batch details di
 Then('Admin should see batch details dialog box closed without creating new batch', async ({batchFixture}) => {
     await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
 });
+
+When('Admin clicks on edit icon on any row of the batch table', async ({batchFixture}) => {
+    const randomNumber = Math.floor(Math.random() * 5) + 1;
+    console.log(randomNumber);
+    batchFixture.getEditButtonForRow(randomNumber).click();
+});
+
+Then('Admin should see details on batch details dialog box', async ({batchFixture}, dataTable) => {
+    for(const [row] of dataTable.rows()) {
+        const detail = row.trim();
+        switch (detail) {
+            case 'batch details':
+                await expect(batchFixture.batchDetailsDialog).toBeVisible();
+                break;
+            case 'batch name value field is disabled for editing':
+                await expect(batchFixture.batchNameBox).toBeDisabled();
+                break;
+            default:
+                throw new Error(`Unknown detail ${detail}`);
+        }
+    }
+});
