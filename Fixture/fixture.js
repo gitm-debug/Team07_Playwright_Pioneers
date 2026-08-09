@@ -31,12 +31,13 @@ export const test = base.extend({
   },
   homepageFixture: async ({page}, use) => {
     await use (new HomePage(page));
+  },
   programFixture: async ({ page }, use) => {
     await use(new ProgramPage(page));
   },
   logoutFixture: async ({ page }, use) => {
     await use(new LogoutPage(page));
-  },
+  }
 });
 
 export const { Given, When, Then, BeforeAll, AfterAll, Before, After } = createBdd(test);
