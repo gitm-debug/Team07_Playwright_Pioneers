@@ -6,6 +6,7 @@ pipeline {
     }
 
     environment {
+        BASE_URL = credentials('BASE_URL')
         EMAIL = credentials('EMAIL')
         PASSWORD = credentials('PASSWORD')
         ROLE = credentials('ROLE')
