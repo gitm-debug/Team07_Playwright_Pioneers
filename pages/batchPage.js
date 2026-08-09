@@ -40,6 +40,19 @@ export class BatchPage {
     this.batchDescriptionSortHeader = 'th[psortablecolumn="batchDescription"]';
     this.batchStatusSortHeader = 'th[psortablecolumn="batchStatus"]';
     this.batchNoOfClassesSortHeader = 'th[psortablecolumn="batchNoOfClasses"]';
+
+    this.batchNamePrefixBox = page.locator('#batchProg');
+    this.batchNameSuffixBox = page.getByRole('textbox', { name: 'Batch Name *' });
+    this.batchNameBox = page.locator('#batchName').nth(1);
+    this.descriptionTextBox = page.getByRole('textbox', { name: 'Description' });
+    this.noOfClassesInputBox = page.getByRole('spinbutton', { name: 'Number of Classes *' });
+    this.errorMsgUnderBatchName = page.getByText('This field accept only');
+    this.saveButton = page.getByRole('button', { name: 'Save' });
+    this.cancelButton = page.getByRole('button', { name: 'Cancel' });
+    this.failPopup = page.getByText('FailedBatch Creation Failed');
+    this.successPopup = page.getByText('SuccessfulBatch Created');
+    this.statusErrorPopup = page.getByText('Status is required.');
+    this.dialogCloseButton = page.getByLabel('Batch Details').getByRole('button').filter({ hasText: /^$/ });
   }
 
   async navigate() {
@@ -147,5 +160,22 @@ export class BatchPage {
       if (nums[i] < nums[i + 1]) return false;
     }
     return true;
+  }
+
+  async selectProgramName(programName) {
+    await this.dropdownUnderProgramName.click();
+    await this.page.locator('.p-autocomplete-input').fill(programName);
+    const programOption = this.page.locator('.p-autocomplete-item').filter({ hasText: programName });
+    await programOption.waitFor({ state: 'visible'});
+    await programOption.click();
+  }
+  async clickSaveButton() {
+    await this.saveButton.click();
+  }
+  async clickCancelButton() {
+    await this.cancelButton.click();
+  }
+  async clickDialogCloseButton() {
+    await this.dialogCloseButton.click();
   }
 }
