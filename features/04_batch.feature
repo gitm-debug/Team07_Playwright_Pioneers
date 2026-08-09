@@ -4,21 +4,21 @@ Background:	Admin is logged in to LMS Portal
   Given Admin is on home page after login
   When Admin clicks Batch on the navigation bar
 
+#----------Batch page navigation ------------#
 @navigateToBatchPage
 Scenario: Admin navigates to Batch page
-  # When Admin clicks Batch on the navigation bar
   Then Admin should be in the Manage Batch Page
 
+# ---------- Menu bar --------------- #
 @batchSubMenu
 Scenario: Batch-sub menu displayed
-  # When Admin clicks Batch on the navigation bar
   Then Admin should see the following sub-menu options
     | Sub-menu Options |
     | Add New Batch    |
 
+#--------------Manage batch UI validation ---------#
 @batchPageElements
 Scenario: Different elements on Batch page are displayed 
-  # When Admin clicks Batch on the navigation bar
  Then Admin should see the following elements on Batch page
    | Element Name         |
    | Manage Batch Page heading      |
@@ -31,6 +31,7 @@ Scenario: Different elements on Batch page are displayed
    | checkbox in datatable header row |
    | sort icon next to all datatable headers|
 
+#----------- Add new batch UI validation -------------#
 @BatchDetailsDialogBox
 Scenario: Add New Batch dialog is displayed
   When Admin clicks on Add New batch under the batch menu bar
@@ -47,6 +48,7 @@ Scenario: Different fields are displayed under Batch Details dialog box
     | program name with dropdown |
     | Status radio buttons |
 
+#---------------- Add new batch functional validation --------------#
 @programNameFieldValidation
 Scenario: Program name appears as batch prefix
   When Admin clicks on Add New batch under the batch menu bar
@@ -81,3 +83,12 @@ Scenario: Close icon functionality
   When Admin clicks on Add New batch under the batch menu bar
   When Admin clicks on close icon on the top right corner of the batch details dialog box
   Then Admin should see batch details dialog box closed without creating new batch
+
+#-------------Edit batch validation-------------#
+@editIconOnBatchPage
+Scenario: Edit icon functionality on batch page
+  When Admin clicks on edit icon on any row of the batch table
+  Then Admin should see details on batch details dialog box
+  | details |
+  | batch details |
+  | batch name value field is disabled for editing |
