@@ -45,7 +45,7 @@ setup('login and save session', async ({ page }) => {
   // Save both cookies and sessionStorage
   const storageState = await page.context().storageState();
   storageState.sessionStorage = sessionStorage;
-
+  fs.mkdirSync('playwright/.auth', { recursive: true });
   fs.writeFileSync(AUTH_FILE, JSON.stringify(storageState, null, 2));
   console.log('Session saved to', AUTH_FILE);
 });
