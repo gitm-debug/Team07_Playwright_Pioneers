@@ -1,0 +1,6 @@
+Context set: expectedMessage = This field should start with an alphabet, no special char other than a hyphen and have min 4 char.
+Context set: currentProgramName = -testname
+Context set: currentProgramData = [object Object]
+Context set: testType = negative
+Program verification failed or was a negative case; not adding to global storage.
+Current program count in storage: 0
