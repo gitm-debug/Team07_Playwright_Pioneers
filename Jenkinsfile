@@ -38,7 +38,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'npx playwright test --project=chromium-auth'
+                bat 'npx playwright test --project=chromium-auth --project=chromium-noauth'
             }
         }
 
