@@ -1,46 +1,40 @@
-import {expect} from '@playwright/test';
-export class ProgramPage{
-    constructor(page){
-        this.page = page;
-        this.programMenuBar= page.getByRole('button', { name: 'Program' });
-        this.addNewProgramMenuItem = page.getByRole('menuitem', { name: 'Add New Program' });
-        this.manageProgram = page.getByText('Manage Program');
-        this.searchBox = page.getByRole('textbox', { name: 'Search...' });
-        this.tableHeaders = page.locator('table thead th');
-        this.rowCheckboxes = page.locator('table tbody input[type="checkbox"]');
-        this.editBtnsProgram = page.locator('#editProgram');
-        this.deleteBtnsProgram = page.locator('#deleteProgram');
-        this.multiDeleteBtn = page.locator("div[class='p-checkbox-box']")
-        this.footerMsg = page.locator(".p-d-flex.p-ai-center.p-jc-between.ng-star-inserted")
-        this.paginationMsg= page.locator(".p-paginator-current.ng-star-inserted")
-        
-        // Add New Program Dialog locators
-        this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');
-        this.dialogTitle = page.locator('span.p-dialog-title.ng-tns-c81-8.ng-star-inserted');
-        
-        // Form fields
-        //await page.locator("//label[@for='programName']")
-        this.nameText= page.getByLabel('Name*')
-        this.nameField = page.locator('#programName');
-        this.descriptionText = page.getByLabel('Description');
-        this.descriptionField= page.getByRole('textbox', { name: 'Description' })
-        // Status radio buttons
-        this.activeRadio = page.locator('div.p-radiobutton:has(input#Active) .p-radiobutton-box');
-        this.inactiveRadio = page.locator('div.p-radiobutton:has(input#Inactive) .p-radiobutton-box');
-        // Mandatory field indicators
-        this.nameMandatoryIndicator = page.locator("//label[@for='programName']//span[contains(text(),'*')]");
-        this.statusMandatoryIndicator = page.locator("//lable[@for='online']//span[contains(text(),'*')]");
-        //Add Program save and cancel buttons
-        this.saveBtn = page.getByRole('button', { name: 'Save' });
-        this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
-        // Error messages 
-        this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">
-        this.fieldError = page.locator('small.p-invalid'); // Same selector
-      }
-      async navigateToProgramPage(){
-        await this.programMenuBar.click();
-    }
-    // 1. Manage Program heading
+import { expect } from '@playwright/test';
+export class ProgramPage {
+  constructor(page) {
+    this.page = page;
+    this.programMenuBar = page.getByRole('button', { name: 'Program' });
+    this.addNewProgramMenuItem = page.getByRole('menuitem', { name: 'Add New Program' });
+    this.manageProgram = page.getByText('Manage Program');
+    this.searchBox = page.getByRole('textbox', { name: 'Search...' });
+    this.tableHeaders = page.locator('table thead th');
+    this.rowCheckboxes = page.locator('table tbody input[type="checkbox"]');
+    this.editBtnsProgram = page.locator('#editProgram');
+    this.deleteBtnsProgram = page.locator('#deleteProgram');
+    this.multiDeleteBtn = page.locator("div[class='p-checkbox-box']")
+    this.footerMsg = page.locator(".p-d-flex.p-ai-center.p-jc-between.ng-star-inserted")
+    this.paginationMsg = page.locator(".p-paginator-current.ng-star-inserted")
+    this.programDetailsDialog = page.getByText('Program Details');
+    this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');
+    this.dialogTitle = page.locator('span.p-dialog-title.ng-tns-c81-8.ng-star-inserted');
+    this.nameText = page.getByLabel('Name*')
+    this.nameField = page.locator('#programName');
+    this.descriptionText = page.getByLabel('Description');
+    this.descriptionField = page.getByRole('textbox', { name: 'Description' })
+    this.activeRadio = page.locator('div.p-radiobutton:has(input#Active) .p-radiobutton-box');
+    this.inactiveRadio = page.locator('div.p-radiobutton:has(input#Inactive) .p-radiobutton-box');
+    this.nameMandatoryIndicator = page.locator("//label[@for='programName']//span[contains(text(),'*')]");
+    this.statusMandatoryIndicator = page.locator("//lable[@for='online']//span[contains(text(),'*')]");
+    this.saveBtn = page.getByRole('button', { name: 'Save' });
+    this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
+    this.dialogCloseButton = page.getByLabel('Program Details').getByRole('button').filter({ hasText: /^$/ });
+    // Error messages 
+    this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
+    this.tableRows = page.locator('table tbody tr');
+  }
+  async navigateToProgramPage() {
+    await this.programMenuBar.click();
+  }
+
   async isHeadingVisible() {
     try {
       return await this.manageProgram.isVisible();
@@ -48,7 +42,7 @@ export class ProgramPage{
       return false;
     }
   }
-  // 2. Add New Program menu
+
   async isAddNewProgramVisible() {
     try {
       return await this.addNewProgramMenuItem.isVisible();
@@ -57,7 +51,6 @@ export class ProgramPage{
     }
   }
 
-  // 3. Search bar
   async isSearchBarVisible() {
     try {
       return await this.searchBox.isVisible();
@@ -66,7 +59,6 @@ export class ProgramPage{
     }
   }
 
-  // 4. Search placeholder
   async isSearchPlaceholderCorrect() {
     try {
       const placeholder = await this.searchBox.getAttribute('placeholder');
@@ -77,35 +69,29 @@ export class ProgramPage{
     }
   }
 
-  // 5. Table headers
   async areTableHeadersVisible() {
     try {
       const count = await this.tableHeaders.count();
-      console.log('Table headers count:', count);
       return count > 0;
     } catch {
       return false;
     }
   }
 
-  // 6. Row checkboxes - FIXED
   async areRowCheckboxesUnchecked() {
     try {
       const count = await this.rowCheckboxes.count();
-      console.log('Checkboxes count:', count);
-      
       if (count === 0) {
         console.log('No checkboxes found');
         return false;
       }
-      
+
       for (let i = 0; i < count; i++) {
         if (await this.rowCheckboxes.nth(i).isChecked()) {
-          console.log(`Checkbox ${i} is checked`);
           return false;
         }
       }
-      console.log('All checkboxes are unchecked');
+      
       return true;
     } catch (error) {
       console.error('Error checking checkboxes:', error);
@@ -113,11 +99,10 @@ export class ProgramPage{
     }
   }
 
-  // 7. Edit/Delete icons 
   async areEditIconsVisible() {
     try {
       const editCount = await this.editBtnsProgram.count();
-      console.log('Edit buttons count:', editCount);
+      
       return editCount > 0;
     } catch {
       return false;
@@ -126,7 +111,7 @@ export class ProgramPage{
   async areDeleteIconsVisible() {
     try {
       const deleteCount = await this.deleteBtnsProgram.count();
-      console.log('Delete buttons count:', deleteCount);
+      
       return deleteCount > 0;
     } catch {
       return false;
@@ -140,7 +125,6 @@ export class ProgramPage{
     }
   }
 
-  // Main validation method
   async validateUIElements(uiElements) {
     const errors = [];
 
@@ -156,7 +140,7 @@ export class ProgramPage{
       "Delete icons": this.areDeleteIconsVisible.bind(this),
       // "Pagination section": this.isPaginationVisible.bind(this), 
       // "Footer message": this.isFooterVisible.bind(this) // 
-      
+
     };
 
     for (const name of uiElements) {
@@ -165,7 +149,7 @@ export class ProgramPage{
         errors.push(`Unknown UI element: ${name}`);
         continue;
       }
-      
+
       const result = await method();
       if (!result) {
         errors.push(`UI element '${name}' failed validation`);
@@ -175,8 +159,8 @@ export class ProgramPage{
     if (errors.length > 0) {
       throw new Error("UI Validation Failed:\n" + errors.join("\n"));
     }
+
     
-    console.log('All UI elements validated successfully!');
   }
   // Add New Program UI Elements validation methods
   async clickAddNewProgram() {
@@ -184,9 +168,31 @@ export class ProgramPage{
     await this.addNewProgramMenuItem.click();
     await this.dialog.waitFor({ state: 'visible', timeout: 5000 });
   }
-  // ============= Individual Verification Methods for Add New Program UI Dialog =============
 
-  
+  async searchProgram(searchTerm) {
+    try {
+      await this.page.keyboard.press('Escape');
+      await this.page.waitForTimeout(500);
+      await this.page.locator('.cdk-overlay-backdrop').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
+      await this.searchBox.click();
+      await this.page.waitForTimeout(200);
+      await this.searchBox.clear();
+      await this.searchBox.fill(searchTerm);
+      await this.searchBox.press('Enter');
+      await this.page.waitForTimeout(1000);
+      
+    } catch (error) {
+      console.error(`Failed to search: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async clickDialogCloseButton() {
+    await this.dialogCloseButton.click();
+  }
+  async clickCancelButton() {
+    await this.cancelBtn.click();
+  }
 
   async verifyAddNewProgramDialog() {
     await this.dialog.waitFor({ state: 'visible', timeout: 5000 });
@@ -205,14 +211,12 @@ export class ProgramPage{
   }
 
   async verifyMandatoryFields() {
-    // Verify Name field mandatory indicator
     await this.nameMandatoryIndicator.waitFor({ state: 'visible', timeout: 5000 });
     const nameIndicatorVisible = await this.nameMandatoryIndicator.isVisible();
     if (!nameIndicatorVisible) {
       throw new Error('Mandatory indicator for "Name" is not visible');
     }
 
-    // Verify Status field mandatory indicator
     await this.statusMandatoryIndicator.waitFor({ state: 'visible', timeout: 5000 });
     const statusIndicatorVisible = await this.statusMandatoryIndicator.isVisible();
     if (!statusIndicatorVisible) {
@@ -239,132 +243,182 @@ export class ProgramPage{
   async verifyStatusRadioButtons() {
     await this.activeRadio.waitFor({ state: 'visible', timeout: 5000 });
     await this.inactiveRadio.waitFor({ state: 'visible', timeout: 5000 });
-    
     const activeVisible = await this.activeRadio.isVisible();
     const inactiveVisible = await this.inactiveRadio.isVisible();
-    
     if (!activeVisible || !inactiveVisible) {
       throw new Error('Status radio buttons are not visible');
     }
   }
-  //----------- Add New Program functional validation methods -----------
   async clickProgramSaveButton() {
-    await this.saveBtn.click();  
-    console.log('Save button clicked');
+    await this.saveBtn.click();   
   }
-async fillProgramDetails(name, description, status) {
-  if (name !== undefined) {
-    await this.nameField.clear();
-    if (name) await this.nameField.fill(name);
-  }
-  
-  if (description !== undefined) {
-    await this.descriptionField.clear();
-    if (description) await this.descriptionField.fill(description);
-  }
-  
-  if (status) {
-    if (status.toLowerCase() === 'active') {
-      await this.activeRadio.click();
-    } else if (status.toLowerCase() === 'inactive') {
-      await this.inactiveRadio.click();
+  async fillProgramDetails(name, description, status) {
+    if (name !== undefined) {
+      await this.nameField.clear();
+      if (name) await this.nameField.fill(name);
     }
-  }
-}
-// Verify message methods
-async verifyAppropriateMessage(expectedMessage, testType) { 
-  if (testType === 'positive') {
-    await this.verifyProgramSuccessMessage(expectedMessage);
-    return true;
-  } else if (testType === 'negative') {
-    await this.verifyProgramErrorMessage(expectedMessage);
-    return false;
-  } else {
-    // Auto-detect fallback
-    if (expectedMessage.toLowerCase().includes('success') || 
-        expectedMessage.toLowerCase().includes('created')) {
-      await this.verifyProgramSuccessMessage(expectedMessage);
-      return true;
-    } else {
-      await this.verifyProgramErrorMessage(expectedMessage);
-      return false;
+
+    if (description !== undefined) {
+      await this.descriptionField.clear();
+      if (description) await this.descriptionField.fill(description);
     }
-  }
-}
-async verifyProgramSuccessMessage(expectedMessage) {
-  try {
-    // Wait for the toast to appear using role="alert"
-    await this.page.locator('[role="alert"]').first().waitFor({ 
-      state: 'visible', 
-      timeout: 10000 
-    });
-    console.log('Toast container found');
-    
-    //  Get the detail message
-    const detailMessage = this.page.locator('.p-toast-detail');
-    await detailMessage.first().waitFor({ state: 'visible', timeout: 5000 });
-    const actualMessage = await detailMessage.first().textContent();
-    
-    console.log(`Success message found: "${actualMessage}"`);
-    
-    // Verify the message
-    if (!actualMessage.includes(expectedMessage)) {
-      throw new Error(`Success message mismatch. Expected: "${expectedMessage}", Got: "${actualMessage}"`);
-    }
-    
-    console.log(`Success message verified: "${actualMessage}"`);
-    
-    // Also get the summary if needed
-    const summary = this.page.locator('.p-toast-summary');
-    const summaryText = await summary.first().textContent();
-    console.log(`Toast summary: "${summaryText}"`);
-    
-  } catch (error) {
-    // Fallback: Try getByText
-    try {
-      const message = this.page.getByText('Program Created Successfully');
-      await message.waitFor({ state: 'visible', timeout: 5000 });
-      const text = await message.textContent();
-      console.log(`Found via getByText: "${text}"`);
-      return;
-    } catch (e) {
-      // Ignore
-    }
-    throw new Error(`Success message not found: ${error.message}`);
-  }
-}
-async verifyProgramErrorMessage(expectedMessage) {
-  try {
-    await this.page.waitForTimeout(1000);
-    
-    // Get ALL small.p-invalid elements
-    const errorElements = this.page.locator('small.p-invalid');
-    const count = await errorElements.count();
-    
-    console.log(`Found ${count} error elements`);
-    
-    let found = false;
-    
-    for (let i = 0; i < count; i++) {
-      const text = await errorElements.nth(i).textContent();
-      const trimmedText = text?.trim();
-      
-      console.log(`Error ${i}: "${trimmedText}"`);
-      
-      if (trimmedText && trimmedText.length > 0) {
-        if (trimmedText.includes(expectedMessage) || expectedMessage.includes(trimmedText)) {
-          found = true;          
-          break;
-        }
+
+    if (status) {
+      if (status.toLowerCase() === 'active') {
+        await this.activeRadio.click();
+      } else if (status.toLowerCase() === 'inactive') {
+        await this.inactiveRadio.click();
       }
     }
-    
-    if (!found) {
-      throw new Error(`Error message not found for: "${expectedMessage}"`);
+  }
+  // Verify message methods
+  async verifyAppropriateMessage(expectedMessage, testType) {
+    if (testType === 'positive') {
+      await this.verifyProgramSuccessMessage(expectedMessage);
+      return true;
+    } else if (testType === 'negative') {
+      await this.verifyProgramErrorMessage(expectedMessage);
+      return false;
+    } else {
+
+      if (expectedMessage.toLowerCase().includes('success') ||
+        expectedMessage.toLowerCase().includes('created')) {
+        await this.verifyProgramSuccessMessage(expectedMessage);
+        return true;
+      } else {
+        await this.verifyProgramErrorMessage(expectedMessage);
+        return false;
+      }
     }
-    
-  } catch (error) {
-    throw new Error(`Error message verification failed: ${error.message}`);
+  }
+  async verifyProgramSuccessMessage(expectedMessage) {
+    try {
+      // Wait for the toast to appear using role="alert"
+      await this.page.locator('[role="alert"]').first().waitFor({
+        state: 'visible',
+        timeout: 10000
+      });
+      
+      const detailMessage = this.page.locator('.p-toast-detail');
+      await detailMessage.first().waitFor({ state: 'visible', timeout: 5000 });
+      const actualMessage = await detailMessage.first().textContent();   
+      if (!actualMessage.includes(expectedMessage)) {
+        throw new Error(`Success message mismatch. Expected: "${expectedMessage}", Got: "${actualMessage}"`);
+      }           
+      const summary = this.page.locator('.p-toast-summary');
+      const summaryText = await summary.first().textContent();
+      
+    } catch (error) {
+
+      try {
+        const message = this.page.getByText('Program Created Successfully');
+        await message.waitFor({ state: 'visible', timeout: 5000 });
+        const text = await message.textContent();        
+        return;
+      } catch (e) {
+        // Ignore
+      }
+      throw new Error(`Success message not found: ${error.message}`);
+    }
+  }
+  async verifyProgramErrorMessage(expectedMessage) {
+    try {
+      await this.page.waitForTimeout(1000);
+      const errorElements = this.page.locator('small.p-invalid');
+      const count = await errorElements.count();      
+      let found = false;      
+      for (let i = 0; i < count; i++) {
+        const text = await errorElements.nth(i).textContent();
+        const trimmedText = text?.trim();              
+        if (trimmedText && trimmedText.length > 0) {
+          if (trimmedText.includes(expectedMessage) || expectedMessage.includes(trimmedText)) {
+            found = true;
+            break;
+          }
+        }
+      }
+
+      if (!found) {
+        throw new Error(`Error message not found for: "${expectedMessage}"`);
+      }
+
+    } catch (error) {
+      throw new Error(`Error message verification failed: ${error.message}`);
+    }
+  }
+  async verifyProgramInSearchResults(programName) {
+    try {
+      await this.page.waitForTimeout(1000);
+      const row = this.page.locator(`table tbody tr:has-text("${programName}")`);
+      const count = await row.count();
+
+      if (count === 0) {
+        throw new Error(`Program "${programName}" not found in search results`);
+      }
+
+      const cells = row.locator('td');
+      const name = await cells.nth(0).textContent();
+      const description = await cells.nth(1).textContent();
+      const status = await cells.nth(2).textContent();      
+      return { name, description, status };
+    } catch (error) {
+      throw new Error(`Program not found: ${error.message}`);
+    }
+  }
+
+  async verifyProgramByDescription(description) {
+    try {
+      await this.page.waitForTimeout(1000);
+      const row = this.page.locator(`table tbody tr:has-text("${description}")`);
+      const count = await row.count();
+      if (count === 0) {
+        throw new Error(`Program with description "${description}" not found`);
+      }
+      const cells = row.locator('td');
+      const name = await cells.nth(0).textContent();
+      const desc = await cells.nth(1).textContent();
+      const status = await cells.nth(2).textContent();      
+      return { name, description: desc, status };
+    } catch (error) {
+      throw new Error(`Description not found: ${error.message}`);
+    }
+  }
+
+  async verifyPartialSearchResults(partialName) {
+    try {
+      await this.page.waitForTimeout(1000);      
+      if (!this.tableRows) {
+        throw new Error('tableRows locator is not defined');
+      }
+      const rows = await this.tableRows.all();
+      const rowCount = rows.length;
+      if (rowCount === 0) {
+        console.log(`No results found for partial search: "${partialName}"`);
+        return [];
+      }     
+      const results = [];
+      for (let i = 0; i < rowCount; i++) {
+        const cells = rows[i].locator('td');
+        const name = await cells.nth(0).textContent();
+        results.push(name?.trim());
+      }      
+      return results;
+    } catch (error) {
+      throw new Error(`Partial search failed: ${error.message}`);
+    }
+  }
+  async verifyNoResults() {
+    try {
+      await this.page.waitForTimeout(1000);
+      const rowCount = await this.tableRows.count();      
+      const noResultsVisible = await this.page.getByText('Showing 0 to 0 of 0 entries').isVisible().catch(() => false);
+      if (rowCount === 0 || noResultsVisible) {
+        console.log(' No results found as expected');
+        return true;
+      }
+      throw new Error('Expected zero results but found results');
+    } catch (error) {
+      throw new Error(`No results verification failed: ${error.message}`);
+    }
   }
 }
-    }

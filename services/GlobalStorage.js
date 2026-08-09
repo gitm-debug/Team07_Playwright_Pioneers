@@ -1,4 +1,3 @@
-// Global singleton for sharing data across steps and feature files
 
 class GlobalStorage {
   constructor() {
@@ -20,9 +19,7 @@ class GlobalStorage {
     };
 
     this.programs.push(program);
-    this.currentProgram = program;
-
-    console.log(` Program added to storage: ${program.name}`);
+    this.currentProgram = program;    
     return program;
   }
 
@@ -67,12 +64,6 @@ class GlobalStorage {
     return this.programs.some(p => p.name === name);
   }
 
-  clearPrograms() {
-    this.programs = [];
-    this.currentProgram = null;
-    console.log('All programs cleared from storage');
-  }
-
   setContext(key, value) {
     this.context[key] = value;
     console.log(`Context set: ${key} = ${value}`);
@@ -85,13 +76,6 @@ class GlobalStorage {
   clearContext() {
     this.context = {};
     console.log('All context cleared');
-  }
-
-  clearAll() {
-    this.programs = [];
-    this.currentProgram = null;
-    this.context = {};
-    console.log('All storage cleared');
   }
 
 }

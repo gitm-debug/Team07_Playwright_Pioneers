@@ -1,21 +1,21 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "vaniwb",
+      "name": "Javascript-a",
       "description": "Intro to Java",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "vaniwc",
+      "name": "cloud-a",
       "description": "Azure Cloud",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "vaniwd",
+      "name": "azure-a",
       "description": "DevOps",
       "status": "Active",
       "expectedMessage": "Program created successfully",
@@ -24,6 +24,13 @@
     "emptyName": {
       "name": "",
       "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "Program name is required.",
+      "testType": "negative"
+    },
+    "emptyPrgSubmission": {
+      "name": "",
+      "description": "",
       "status": "Active",
       "expectedMessage": "Program name is required.",
       "testType": "negative"
@@ -102,7 +109,7 @@
       "name": "Java-i",
       "description": "Duplicate Description",
       "status": "Active",
-      "expectedMessage": "Program with this name already exists",
+      "expectedMessage": "Program name is already exist.",
       "testType": "negative"
     }
   }

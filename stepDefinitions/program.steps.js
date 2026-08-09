@@ -84,20 +84,18 @@ When('Admin clicks on {string}, enters details for fields using {string}, and cl
     throw new Error(`Test data not found for key: ${testDataKey}`);
   }
 
-  
   await programFixture.addNewProgramMenuItem.waitFor({ state: 'visible' });
   await programFixture.addNewProgramMenuItem.click();
   await programFixture.dialog.waitFor({ state: 'visible', timeout: 5000 });
-  
+
   await programFixture.fillProgramDetails(
     programData.name,
     programData.description,
     programData.status
   );
-  
   await programFixture.clickProgramSaveButton();
 
-  // Store for verification 
+  // Storing for verification 
   globalStorage.setContext('expectedMessage', programData.expectedMessage);
   globalStorage.setContext('currentProgramName', programData.name);
   globalStorage.setContext('currentProgramData', {
@@ -136,4 +134,93 @@ Then('Admin should see appropriate message for program', async ({ programFixture
   }
 
   console.log(`Current program count in storage: ${globalStorage.getCount()}`);
+});
+When('Admin clicks on {string}, clicks on close icon on the top right corner of the Program details dialog box with out entering details', async ({ programFixture }, arg) => {
+  // Step: When Admin clicks on "Add New Program", clicks on close icon on the top right corner of the Program details dialog box with out entering details
+  // From: features\03_program.feature:66:5
+  await programFixture.clickAddNewProgram();
+  await programFixture.clickDialogCloseButton();
+});
+
+Then('Admin should see Program details dialog box closed without creating new Program', async ({ programFixture }) => {
+  // Step: Then Admin should see Program details dialog box closed without creating new Program
+  // From: features\03_program.feature:67:5
+  await expect(programFixture.programDetailsDialog).not.toBeVisible();
+});
+
+When('Admin clicks on {string}, clicks on cancel button of the Program details dialog box with out entering details', async ({ programFixture }, arg) => {
+  // Step: When Admin clicks on "Add New Program", clicks on cancel button of the Program details dialog box with out entering details
+  // From: features\03_program.feature:71:5
+  await programFixture.clickAddNewProgram();
+  await programFixture.clickCancelButton();
+});
+
+When('Admin searches for stored program by {string}', async ({ programFixture }, searchType) => {
+  // Step: When Admin searches for stored program by "name"
+  // From: features\03_program.feature:77:5
+  const programData = globalStorage.getLastProgram();  
+
+  if (!programData || !programData.name || programData.name.trim() === '') {
+    console.log('All programs in storage:', globalStorage.getAllPrograms());
+    throw new Error('No valid program found in global storage!');
+  }
+  let searchTerm = '';
+  if (searchType === 'name') {
+    searchTerm = programData.name;
+  } else if (searchType === 'description') {
+    searchTerm = programData.description;
+  } else if (searchType === 'partial') {
+    searchTerm = programData.name.substring(0, 4);
+    if (searchTerm.endsWith('-')) {
+      searchTerm = programData.name.substring(0, 5);
+    }
+  } else {
+    throw new Error(`Unknown search type: ${searchType}`);
+  }
+
+  console.log(` Searching by ${searchType}: "${searchTerm}"`);
+
+  await programFixture.searchProgram(searchTerm);
+
+  globalStorage.setContext('currentSearchTerm', searchTerm);
+  globalStorage.setContext('currentSearchType', searchType);
+});
+
+Then('Admin should see the program in search results for {string}', async ({ programFixture }, searchType) => {
+  // Step: Then Admin should see the program in search results for "name"
+  // From: features\03_program.feature:78:5
+  // 
+  const programData = globalStorage.getLastProgram();
+  const searchTerm = globalStorage.getContext('currentSearchTerm');
+
+  if (!programData || !programData.name || programData.name.trim() === '') {
+    throw new Error('No valid program data found in storage!');
+  }
+
+  console.log(`Verifying search results for: "${searchType}"`);
+
+  if (searchType === 'name') {
+    await programFixture.verifyProgramInSearchResults(programData.name);
+    console.log(`Program verified by name: "${programData.name}"`);
+  } else if (searchType === 'description') {
+    await programFixture.verifyProgramByDescription(programData.description);
+    console.log(`Program verified by description: "${programData.description}"`);
+  } else if (searchType === 'partial') {
+    await programFixture.verifyPartialSearchResults(searchTerm || programData.name.substring(0, 4));
+    console.log(`Programs verified by partial name: "${searchTerm}"`);
+  } else {
+    throw new Error(`Unknown search type: ${searchType}`);
+  }
+});
+
+When('Admin enters {string} in the search box', async ({ programFixture }, searchTerm) => {
+  // Step: When Admin enters "NonExistentProgram123" in the search box
+  // From: features\03_program.feature:87:5
+  await programFixture.searchProgram(searchTerm);
+});
+
+Then('There should be zero results', async ({ programFixture }) => {
+  // Step: Then There should be zero results
+  // From: features\03_program.feature:88:5
+  await programFixture.verifyNoResults();
 });
