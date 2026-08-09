@@ -1,27 +1,78 @@
 name: Playwright Tests
+
 on:
+  workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [ main, master  ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master ] 
+    
+
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
     - name: Install dependencies
       run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    - name: Generate BDD tests
+      run: npx bddgen
+
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --retries=1
+      env:
+        EMAIL: ${{ secrets.EMAIL }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        ROLE: ${{ secrets.ROLE }}
+        BASE_URL: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com
+
+    - name: Install Allure Commandline
+      if: ${{ !cancelled() }}
+      run: npm install -g allure-commandline
+
+    - name: Generate Allure Report
+      if: ${{ !cancelled() }}
+      run: allure generate allure-results --clean -o allure-report
+
+    - name: Deploy Allure Report to GitHub Pages
+      if: ${{ !cancelled() }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-report
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
+        retention-days: 30
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: allure-results
+        path: allure-results/
+        retention-days: 30
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: test-results
+        path: test-results/
         retention-days: 30

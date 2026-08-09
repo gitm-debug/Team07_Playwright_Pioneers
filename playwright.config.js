@@ -20,6 +20,7 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
+    ['allure-playwright'],
   ],
   use: {
     baseURL: process.env.BASE_URL,
