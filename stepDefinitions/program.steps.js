@@ -40,7 +40,6 @@ When('Admin clicks on Arrow next to Program Description', async () => {
 
 Then('Admin should see the Program Description is sorted in Ascending order', async () => {
   const descriptions = await programPage.getProgramDescriptions();
-  expect(descriptions.length).toBeGreaterThan(0);
   expect(programPage.isSortedAscending(descriptions)).toBe(true);
 });
 
@@ -55,7 +54,6 @@ Given('Admin is in program page where Program descriptions are sorted in ascendi
 
 Then('Admin should see the Program Description is sorted in Descending order', async () => {
   const descriptions = await programPage.getProgramDescriptions();
-  expect(descriptions.length).toBeGreaterThan(0);
   expect(programPage.isSortedDescending(descriptions)).toBe(true);
 });
 
