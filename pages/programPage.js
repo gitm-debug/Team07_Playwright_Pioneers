@@ -30,6 +30,10 @@ export class ProgramPage {
     // Error messages 
     this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
     this.tableRows = page.locator('table tbody tr');
+    //-----------
+    this.programNameHeader = 'th[psortablecolumn="programName"]';
+    this.programDescriptionHeader = 'th[psortablecolumn="programDescription"]';
+    this.programStatusHeader = 'th[psortablecolumn="programStatus"]';
   }
   async navigateToProgramPage() {
     await this.programMenuBar.click();
@@ -91,7 +95,7 @@ export class ProgramPage {
           return false;
         }
       }
-      
+
       return true;
     } catch (error) {
       console.error('Error checking checkboxes:', error);
@@ -102,7 +106,7 @@ export class ProgramPage {
   async areEditIconsVisible() {
     try {
       const editCount = await this.editBtnsProgram.count();
-      
+
       return editCount > 0;
     } catch {
       return false;
@@ -111,7 +115,7 @@ export class ProgramPage {
   async areDeleteIconsVisible() {
     try {
       const deleteCount = await this.deleteBtnsProgram.count();
-      
+
       return deleteCount > 0;
     } catch {
       return false;
@@ -160,7 +164,7 @@ export class ProgramPage {
       throw new Error("UI Validation Failed:\n" + errors.join("\n"));
     }
 
-    
+
   }
   // Add New Program UI Elements validation methods
   async clickAddNewProgram() {
@@ -180,7 +184,7 @@ export class ProgramPage {
       await this.searchBox.fill(searchTerm);
       await this.searchBox.press('Enter');
       await this.page.waitForTimeout(1000);
-      
+
     } catch (error) {
       console.error(`Failed to search: ${error.message}`);
       throw error;
@@ -250,7 +254,7 @@ export class ProgramPage {
     }
   }
   async clickProgramSaveButton() {
-    await this.saveBtn.click();   
+    await this.saveBtn.click();
   }
   async fillProgramDetails(name, description, status) {
     if (name !== undefined) {
@@ -298,22 +302,22 @@ export class ProgramPage {
         state: 'visible',
         timeout: 10000
       });
-      
+
       const detailMessage = this.page.locator('.p-toast-detail');
       await detailMessage.first().waitFor({ state: 'visible', timeout: 5000 });
-      const actualMessage = await detailMessage.first().textContent();   
+      const actualMessage = await detailMessage.first().textContent();
       if (!actualMessage.includes(expectedMessage)) {
         throw new Error(`Success message mismatch. Expected: "${expectedMessage}", Got: "${actualMessage}"`);
-      }           
+      }
       const summary = this.page.locator('.p-toast-summary');
       const summaryText = await summary.first().textContent();
-      
+
     } catch (error) {
 
       try {
         const message = this.page.getByText('Program Created Successfully');
         await message.waitFor({ state: 'visible', timeout: 5000 });
-        const text = await message.textContent();        
+        const text = await message.textContent();
         return;
       } catch (e) {
         // Ignore
@@ -325,11 +329,11 @@ export class ProgramPage {
     try {
       await this.page.waitForTimeout(1000);
       const errorElements = this.page.locator('small.p-invalid');
-      const count = await errorElements.count();      
-      let found = false;      
+      const count = await errorElements.count();
+      let found = false;
       for (let i = 0; i < count; i++) {
         const text = await errorElements.nth(i).textContent();
-        const trimmedText = text?.trim();              
+        const trimmedText = text?.trim();
         if (trimmedText && trimmedText.length > 0) {
           if (trimmedText.includes(expectedMessage) || expectedMessage.includes(trimmedText)) {
             found = true;
@@ -359,7 +363,7 @@ export class ProgramPage {
       const cells = row.locator('td');
       const name = await cells.nth(0).textContent();
       const description = await cells.nth(1).textContent();
-      const status = await cells.nth(2).textContent();      
+      const status = await cells.nth(2).textContent();
       return { name, description, status };
     } catch (error) {
       throw new Error(`Program not found: ${error.message}`);
@@ -377,7 +381,7 @@ export class ProgramPage {
       const cells = row.locator('td');
       const name = await cells.nth(0).textContent();
       const desc = await cells.nth(1).textContent();
-      const status = await cells.nth(2).textContent();      
+      const status = await cells.nth(2).textContent();
       return { name, description: desc, status };
     } catch (error) {
       throw new Error(`Description not found: ${error.message}`);
@@ -386,7 +390,7 @@ export class ProgramPage {
 
   async verifyPartialSearchResults(partialName) {
     try {
-      await this.page.waitForTimeout(1000);      
+      await this.page.waitForTimeout(1000);
       if (!this.tableRows) {
         throw new Error('tableRows locator is not defined');
       }
@@ -395,13 +399,13 @@ export class ProgramPage {
       if (rowCount === 0) {
         console.log(`No results found for partial search: "${partialName}"`);
         return [];
-      }     
+      }
       const results = [];
       for (let i = 0; i < rowCount; i++) {
         const cells = rows[i].locator('td');
         const name = await cells.nth(0).textContent();
         results.push(name?.trim());
-      }      
+      }
       return results;
     } catch (error) {
       throw new Error(`Partial search failed: ${error.message}`);
@@ -410,7 +414,7 @@ export class ProgramPage {
   async verifyNoResults() {
     try {
       await this.page.waitForTimeout(1000);
-      const rowCount = await this.tableRows.count();      
+      const rowCount = await this.tableRows.count();
       const noResultsVisible = await this.page.getByText('Showing 0 to 0 of 0 entries').isVisible().catch(() => false);
       if (rowCount === 0 || noResultsVisible) {
         console.log(' No results found as expected');
@@ -420,5 +424,54 @@ export class ProgramPage {
     } catch (error) {
       throw new Error(`No results verification failed: ${error.message}`);
     }
+  }
+
+  async navigate() {
+    await this.page.goto('/program');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async clickProgramNameArrow() {
+    await this.page.click(this.programNameHeader);
+  }
+
+  async clickProgramDescriptionArrow() {
+    await this.page.click(this.programDescriptionHeader);
+  }
+
+  async clickProgramStatusArrow() {
+    await this.page.click(this.programStatusHeader);
+  }
+
+  async getProgramNames() {
+    return await this.page.$$eval('table tbody tr td:nth-child(2)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  async getProgramDescriptions() {
+    return await this.page.$$eval('table tbody tr td:nth-child(3)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  async getProgramStatuses() {
+    return await this.page.$$eval('table tbody tr td:nth-child(4)', els =>
+      els.map(el => el.textContent.trim())
+    );
+  }
+
+  isSortedAscending(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i].localeCompare(arr[i + 1]) > 0) return false;
+    }
+    return true;
+  }
+
+  isSortedDescending(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i].localeCompare(arr[i + 1]) < 0) return false;
+    }
+    return true;
   }
 }

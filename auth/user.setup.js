@@ -7,21 +7,21 @@ dotenv.config();
 const AUTH_FILE = 'playwright/.auth/user.json';
 
 setup('login and save session', async ({ page }) => {
-  setup.setTimeout(120000);
+  setup.setTimeout(180000);
 
   let loaded = false;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 10; i++) {
     try {
       await page.goto(process.env.BASE_URL + '/login', { timeout: 60000, waitUntil: 'domcontentloaded' });
       loaded = true;
       break;
     } catch (e) {
-      console.log(`Attempt ${i + 1}: Heroku dyno waking up... waiting 10s`);
-      await page.waitForTimeout(10000);
+      console.log(`Attempt ${i + 1}: Heroku dyno waking up... waiting 15s`);
+      await page.waitForTimeout(15000);
     }
   }
 
-  if (!loaded) throw new Error('Could not load app after 5 attempts');
+  if (!loaded) throw new Error('Could not load app after 10 attempts');
 
   await page.waitForSelector('#username', { timeout: 30000 });
   await page.fill('#username', process.env.EMAIL);

@@ -20,12 +20,14 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
+    ['allure-playwright'],
   ],
   use: {
     baseURL: process.env.BASE_URL,
     screenshot: 'on',
     trace: 'on-first-retry',
     video: 'on',
+    timeout: 60000,
     actionTimeout: 30000,
     navigationTimeout: 60000,
   },
@@ -52,6 +54,6 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
       grep: /@noauth/,
-    },
+      },
   ],
 });

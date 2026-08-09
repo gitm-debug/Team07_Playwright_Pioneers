@@ -8,6 +8,11 @@ node_modules/
 /playwright/.auth/
 .features-gen/
 
+# Allure
+/allure-results/
+/allure-report/
+/allure-history/
+
 # Environment
 .env
 
