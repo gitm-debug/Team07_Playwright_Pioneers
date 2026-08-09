@@ -35,6 +35,18 @@ export class BatchPage {
     this.statusField = page.getByText('Status : *');
     this.activeRadioButton = page.locator('.p-radiobutton-box').first();
     this.inactiveRadioButton = page.locator('div:nth-child(3) > #batchStatus > .p-radiobutton > .p-radiobutton-box');
+
+    this.batchNamePrefixBox = page.locator('#batchProg');
+    this.batchNameSuffixBox = page.getByRole('textbox', { name: 'Batch Name *' });
+    this.descriptionTextBox = page.getByRole('textbox', { name: 'Description' });
+    this.noOfClassesInputBox = page.getByRole('spinbutton', { name: 'Number of Classes *' });
+    this.errorMsgUnderBatchName = page.getByText('This field accept only');
+    this.saveButton = page.getByRole('button', { name: 'Save' });
+    this.cancelButton = page.getByRole('button', { name: 'Cancel' });
+    this.failPopup = page.getByText('FailedBatch Creation Failed');
+    this.successPopup = page.getByText('SuccessfulBatch Created');
+    this.statusErrorPopup = page.getByText('Status is required.');
+    this.dialogCloseButton = page.getByLabel('Batch Details').getByRole('button').filter({ hasText: /^$/ });
   }
 
   async clickBatchPageHeader() {
@@ -60,5 +72,21 @@ export class BatchPage {
   }
   getCheckboxForRow(rowIndex) {
     return this.batchTableRows.nth(rowIndex).locator('p-tablecheckbox');
+  }
+  async selectProgramName(programName) {
+    await this.dropdownUnderProgramName.click();
+    await this.page.locator('.p-autocomplete-input').fill(programName);
+    const programOption = this.page.locator('.p-autocomplete-item').filter({ hasText: programName });
+    await programOption.waitFor({ state: 'visible'});
+    await programOption.click();
+  }
+  async clickSaveButton() {
+    await this.saveButton.click();
+  }
+  async clickCancelButton() {
+    await this.cancelButton.click();
+  }
+  async clickDialogCloseButton() {
+    await this.dialogCloseButton.click();
   }
 }
