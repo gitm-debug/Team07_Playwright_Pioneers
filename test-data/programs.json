@@ -1,0 +1,109 @@
+{
+  "Programs": {
+    "validProgram1": {
+      "name": "vaniwb",
+      "description": "Intro to Java",
+      "status": "Active",
+      "expectedMessage": "Program created successfully",
+      "testType": "positive"
+    },
+    "validProgram2": {
+      "name": "vaniwc",
+      "description": "Azure Cloud",
+      "status": "Active",
+      "expectedMessage": "Program created successfully",
+      "testType": "positive"
+    },
+    "validProgram3": {
+      "name": "vaniwd",
+      "description": "DevOps",
+      "status": "Active",
+      "expectedMessage": "Program created successfully",
+      "testType": "positive"
+    },
+    "emptyName": {
+      "name": "",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "Program name is required.",
+      "testType": "negative"
+    },
+    "singleCharName": {
+      "name": "a",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "twoCharName": {
+      "name": "ab",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "threeCharName": {
+      "name": "abc",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "numericOnlyName": {
+      "name": "1234",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "numericStartName": {
+      "name": "123abc",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "specialCharName": {
+      "name": "test@123",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "spaceInName": {
+      "name": "test name",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "startsWithHyphen": {
+      "name": "-testname",
+      "description": "Test Description",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
+      "testType": "negative"
+    },
+    "invalidDescription": {
+      "name": "TestProg",
+      "description": "@#$",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet and min 2 char.",
+      "testType": "negative"
+    },
+    "emptyStatus": {
+      "name": "TestProg",
+      "description": "Test Description",
+      "status": "",
+      "expectedMessage": "Status is required.",
+      "testType": "negative"
+    },
+    "duplicateProgram": {
+      "name": "Java-i",
+      "description": "Duplicate Description",
+      "status": "Active",
+      "expectedMessage": "Program with this name already exists",
+      "testType": "negative"
+    }
+  }
+}
