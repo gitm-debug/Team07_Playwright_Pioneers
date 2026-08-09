@@ -97,8 +97,5 @@ Feature: Login Page - UI Verification
       | wrong password              | valid@email.com  | wrong     | Admin | Invalid username and password            |
       | no role selected            | valid@email.com  | pass123   |       | Please select your Role                  |
       | invalid role                | valid@email.com  | pass123   | Staff | Please select correct role               |
-     # | wrong username              | wrong@email.com  | pass123   | Admin | Invalid username and password            |
-     # | wrong username + wrong pass | wrong@email.com  | wrong     | Admin | Invalid username and password            |
-     # | valid user + wrong role     | valid@email.com  | pass123   | Staff | Please select correct role               |
       | using keyboard              | valid@email.com  | pass123   | Admin | home page                                |
       | using mouse                 | valid@email.com  | pass123   | Admin | home page                                |
