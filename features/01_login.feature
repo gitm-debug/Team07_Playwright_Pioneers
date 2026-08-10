@@ -1,4 +1,4 @@
-@noauth
+@login @noauth
 Feature: Login Page - UI Verification
 
   Background:

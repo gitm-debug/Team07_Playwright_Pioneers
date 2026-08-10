@@ -3,10 +3,16 @@ import logger from '../utils/logger.js';
 export class LoginPage {
   constructor(page) {
     this.page = page;
-    this.emailInput = '#username';
-    this.passwordInput = '#password';
-    this.roleSelect = 'mat-select[formcontrolname="roleSelected"]';
-    this.loginButton = '#login';
+    this.emailInput = page.locator('#username');
+    this.passwordInput = page.locator('#password');
+    this.roleSelect = page.locator('mat-select[formcontrolname="roleSelected"]');
+    this.loginButton = page.locator('#login');
+    this.logo = page.locator('img.images');
+    this.companyName = page.locator('.image-container');
+    this.requiredAsterisk = page.locator('.mat-placeholder-required').first();
+    this.usernameLabel = page.locator('label[for="username"]');
+    this.passwordLabel = page.locator('label[for="password"]');
+    this.errorMessage = page.locator('.error-message, [class*="error"], mat-error, .mat-mdc-snack-bar-container');
   }
 
   async navigate() {
@@ -27,31 +33,31 @@ export class LoginPage {
   }
 
   async enterEmail(email) {
-    await this.page.fill(this.emailInput, email);
+    await this.emailInput.fill(email);
   }
 
   async enterPassword(password) {
-    await this.page.fill(this.passwordInput, password);
+    await this.passwordInput.fill(password);
   }
 
   async selectRole(role) {
-    await this.page.click(this.roleSelect);
-    await this.page.click(`mat-option:has-text("${role}")`);
+    await this.roleSelect.click();
+    await this.page.locator(`mat-option:has-text("${role}")`).click();
   }
 
   async clickLogin() {
-    await this.page.click(this.loginButton);
+    await this.loginButton.click();
   }
 
   async isLoginPageDisplayed() {
-    return await this.page.isVisible(this.loginButton);
+    return await this.loginButton.isVisible();
   }
 
   async hasErrorOrNotFound() {
     const bodyText = await this.page.textContent('body');
     return bodyText.toLowerCase().includes('error') ||
            bodyText.toLowerCase().includes('not found') ||
-           !await this.page.isVisible(this.loginButton);
+           !await this.loginButton.isVisible();
   }
 
   async getPageTitle() {
@@ -59,11 +65,11 @@ export class LoginPage {
   }
 
   async isLogoDisplayed() {
-    return await this.page.isVisible('img.images');
+    return await this.logo.isVisible();
   }
 
   async isCompanyNameDisplayed() {
-    return await this.page.isVisible('.image-container');
+    return await this.companyName.isVisible();
   }
 
   async getInstructionMessage() {
@@ -72,49 +78,42 @@ export class LoginPage {
   }
 
   async getInputFieldCount() {
-    const fields = await this.page.$$('input');
-    return fields.length;
+    const fields = await this.page.locator('input').count();
+    return fields;
   }
 
   async isRoleDropdownDisplayed() {
-    return await this.page.isVisible(this.roleSelect);
+    return await this.roleSelect.isVisible();
   }
 
   async getFirstFieldPlaceholder() {
-    const label = await this.page.$('label[for="username"]');
-    if (label) {
-      const text = await label.textContent();
-      return text.replace('*', '').trim();
-    }
-    return null;
+    const text = await this.usernameLabel.textContent();
+    return text ? text.replace('*', '').trim() : null;
   }
 
   async getSecondFieldPlaceholder() {
-    const label = await this.page.$('label[for="password"]');
-    if (label) {
-      const text = await label.textContent();
-      return text.replace('*', '').trim();
-    }
-    return null;
+    const text = await this.passwordLabel.textContent();
+    return text ? text.replace('*', '').trim() : null;
   }
 
   async isUserAsteriskDisplayed() {
-    return await this.page.isVisible('.mat-placeholder-required');
+    return await this.requiredAsterisk.isVisible();
   }
 
   async getRoleDropdownOptions() {
-    await this.page.click(this.roleSelect);
-    return await this.page.$$eval('mat-option', els => els.map(el => el.textContent.trim()));
+    await this.roleSelect.click();
+    const options = await this.page.locator('mat-option').allTextContents();
+    return options.map(el => el.trim());
   }
 
   async isLoginButtonDisplayed() {
-    return await this.page.isVisible(this.loginButton);
+    return await this.loginButton.isVisible();
   }
 
   async getErrorMessage() {
-    const errorEl = await this.page.$('.error-message, [class*="error"], mat-error, .mat-mdc-snack-bar-container');
-    if (errorEl) {
-      return await errorEl.textContent();
+    const count = await this.errorMessage.count();
+    if (count > 0) {
+      return await this.errorMessage.first().textContent();
     }
     const bodyText = await this.page.textContent('body');
     return bodyText;
@@ -124,13 +123,13 @@ export class LoginPage {
     await this.page.goto('/login');
     await this.page.waitForLoadState('networkidle');
     if (email) {
-      await this.page.fill(this.emailInput, email);
+      await this.emailInput.fill(email);
     }
     if (password) {
-      await this.page.fill(this.passwordInput, password);
+      await this.passwordInput.fill(password);
     }
     if (role) {
-      await this.page.click(this.roleSelect);
+      await this.roleSelect.click();
       const option = this.page.locator(`mat-option:has-text("${role}")`);
       const exists = await option.count();
       if (exists > 0) {
@@ -139,7 +138,7 @@ export class LoginPage {
         await this.page.keyboard.press('Escape');
       }
     }
-    await this.page.click(this.loginButton);
+    await this.loginButton.click();
   }
 
   async waitForLoginResult() {

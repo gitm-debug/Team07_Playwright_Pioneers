@@ -31,9 +31,9 @@ export class ProgramPage {
     this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
     this.tableRows = page.locator('table tbody tr');
     //-----------
-    this.programNameHeader = 'th[psortablecolumn="programName"]';
-    this.programDescriptionHeader = 'th[psortablecolumn="programDescription"]';
-    this.programStatusHeader = 'th[psortablecolumn="programStatus"]';
+    this.programNameHeader = page.locator('th[psortablecolumn="programName"]');
+    this.programDescriptionHeader = page.locator('th[psortablecolumn="programDescription"]');
+    this.programStatusHeader = page.locator('th[psortablecolumn="programStatus"]');
     //Edit
     this.editDialogue = page.getByText('Program Details');
     this.progrmForEdit = page.locator('#programName');
@@ -43,7 +43,6 @@ export class ProgramPage {
     this.cancelForEdit = page.getByText('Cancel');
     this.saveBtn = page.getByText('Save');
     this.successMessage = page.locator('.p-toast-detail, .p-toast-summary, .p-toast-message-text, [role="alert"]');
-
   }
   async navigateToProgramPage() {
     await this.programMenuBar.click();
@@ -497,16 +496,15 @@ export class ProgramPage {
   }
 
   async clickProgramNameArrow() {
-    await this.page.click(this.programNameHeader);
+    await this.programNameHeader.click();
   }
 
   async clickProgramDescriptionArrow() {
-    await this.page.click(this.programDescriptionHeader);
+    await this.programDescriptionHeader.click();
   }
 
   async clickProgramStatusArrow() {
     await this.page.click(this.programStatusHeader);
-
   }
 
   async getProgramNames() {
