@@ -2,6 +2,7 @@ import { Given, When, Then } from "../Fixture/fixture.js";
 import logger from "../utils/logger.js";
 import { expect } from "@playwright/test";
 import { globalStorage } from '../services/GlobalStorage';
+import testData from '../test-data/batchData.json' with {type: 'json'};
 
 Given('Admin is on home page after login', async ({ Page }) => {
     logger.step('Admin is on home page after login');
@@ -146,18 +147,29 @@ Then('Admin should see the following fields under Batch Details dialog box', asy
 
 When('Admin selects program name present in the dropdown', async ({batchFixture, Page}) => {
     //await Page.pause();
-    const programName = globalStorage.getProgramForBatch();
+    const program = globalStorage.getProgramForBatch();
+    if (!program) {
+        throw new Error('No program found in global storage for batch.');
+    }
+    const programName = program.name;
     logger.info(`Program name from global storage is ${programName}`);
-    await batchFixture.selectProgramName('Python');
+    await batchFixture.selectProgramName(programName);
 });
 
 Then('Admin should see selected program name in the batch name prefix box', async ({batchFixture}) => {
-    await expect(batchFixture.batchNamePrefixBox).toHaveValue(/Python/i);
-    //await expect(batchFixture.batchNamePrefixBox).toHaveValue(globalStorage.getProgramForBatch());
+    //await expect(batchFixture.batchNamePrefixBox).toHaveValue(/Python/i);
+    const program = globalStorage.getProgramForBatch();
+    if (!program) {
+        throw new Error('No program found in global storage for batch.');
+    }
+    
+    await expect(batchFixture.batchNamePrefixBox).toHaveValue(program.name);
 });
 
 When('Admin enters alphabets in the batch name suffix box', async ({batchFixture}) => {
-    await batchFixture.batchNameSuffixBox.fill('abc');
+    const batchData = testData.batches['alphabetsBatchname'];
+
+    await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
 });
 
 Then('Admin should get error message below the text box of respective field', async ({batchFixture}) => {
@@ -173,35 +185,38 @@ Then('Admin should see empty text box under the batch name prefix field', async 
     await expect(batchFixture.batchNamePrefixBox).toHaveAttribute('readonly');
 });
 
-When('Admin enters the data only to the mandatory fields and clicks save button to create new batch', async ({batchFixture}) => {
-    await batchFixture.selectProgramName('Python');
-    await batchFixture.batchNameSuffixBox.fill('111');
-    await batchFixture.activeRadioButton.click();
-    await batchFixture.noOfClassesInputBox.fill('5');
-    await batchFixture.clickSaveButton();
-});
+When('Admin enters the {string} to create new batch using {string}', async ({batchFixture}, data, testDataKey) => {
+    const program = globalStorage.getProgramForBatch();
+    if (!program) {
+        throw new Error('No program found in global storage for batch.');
+    }
+    const programName = program.name;
+    const batchData = testData.batches[testDataKey];
 
-Then('Admin should get a successful message with created batch', async ({batchFixture}) => {
-    await expect(batchFixture.successPopup).toBeVisible();
-});
-
-When('Admin enters the {string} to create new batch', async ({batchFixture}, data) => {
-    if (data === 'data to mandatory fields and click save') {
-        await batchFixture.selectProgramName('Python');
-        await batchFixture.batchNameSuffixBox.fill('111');
-        await batchFixture.activeRadioButton.click();
-        await batchFixture.noOfClassesInputBox.fill('5');
+    if (data === 'data to mandatory fields and click save') {       
+        await batchFixture.selectProgramName(programName);
+        await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
+        if(batchData.status === 'active')
+            await batchFixture.activeRadioButton.click();
+        else 
+            await batchFixture.inactiveRadioButton.click();
+        await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
         await batchFixture.clickSaveButton();
+
     } else if (data === 'leaves blank one of the mandatory fields') {
-        await batchFixture.selectProgramName('Python');
-        await batchFixture.batchNameSuffixBox.fill('111');
-        await batchFixture.noOfClassesInputBox.fill('5');
+        await batchFixture.selectProgramName(programName);
+        await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
+        await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
         await batchFixture.clickSaveButton();
+
     } else if (data === 'valid data to all mandatory fields and click cancel') {
-        await batchFixture.selectProgramName('Python');
-        await batchFixture.batchNameSuffixBox.fill('111');
-        await batchFixture.activeRadioButton.click();
-        await batchFixture.noOfClassesInputBox.fill('5');
+        await batchFixture.selectProgramName(programName);
+        await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
+                if(batchData.status === 'active')
+            await batchFixture.activeRadioButton.click();
+        else 
+            await batchFixture.inactiveRadioButton.click();
+        await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
         await batchFixture.clickCancelButton();
     }
 });
@@ -246,28 +261,31 @@ Then('Admin should see details on batch details dialog box', async ({batchFixtur
     }
 });
 
-When('Admin updates any fields with {string} on batch details dialog box', async ({batchFixture}, details) => {
+When('Admin updates any fields with {string} on batch details dialog box using {string}', async ({batchFixture}, details, testDataKey) => {
+    const batchData = testData.batches[testDataKey];
+    logger.info(`Update batch data with ${testDataKey}`);
+
     if(details === 'invalid data and click save button') {
         const randomNumber = Math.floor(Math.random() * 5) + 1;
         console.log(randomNumber);
         batchFixture.getEditButtonForRow(randomNumber).click();
-        await (batchFixture.descriptionTextBox).fill("@ api learning 123");
+        await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
         await batchFixture.clickSaveButton();
     }
     else if(details === 'valid data and click save button') {
         const randomNumber = Math.floor(Math.random() * 5) + 1;
         console.log(randomNumber);
         batchFixture.getEditButtonForRow(randomNumber).click();
-        await (batchFixture.descriptionTextBox).fill("api learning 123");
-        await (batchFixture.noOfClassesInputBox).fill("20");
+        await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
+        await (batchFixture.noOfClassesInputBox).fill(batchData.noOfClasses);
         await batchFixture.clickSaveButton();
     }
     else if(details === 'valid data and click cancel button') {
         const randomNumber = Math.floor(Math.random() * 5) + 1;
         console.log(randomNumber);
         batchFixture.getEditButtonForRow(randomNumber).click();
-        await (batchFixture.descriptionTextBox).fill("api learning 123");
-        await (batchFixture.noOfClassesInputBox).fill("20");
+        await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
+        await (batchFixture.noOfClassesInputBox).fill(batchData.noOfClasses);
         await batchFixture.clickCancelButton();
     }
 });

@@ -1,0 +1,24 @@
+{
+    "batches": {
+        "alphabetsBatchname": {
+            "batchNameSuffix": "abcd" 
+        },
+        "validMandatoryData": {
+            "batchNameSuffix": "111",
+            "noOfClasses": "5",
+            "status": "active" 
+        },
+        "blankMandatoryField": {
+            "batchNameSuffix": "222",
+            "noOfClasses": "6"
+        },
+        "updateWithValidData": {
+            "batchDescription": "api learning 123",
+            "noOfClasses": "20"
+        },
+        "updateWithInvalidData": {
+            "batchDescription": "@ api learning 123",
+            "noOfClasses": "20"          
+        }
+    }
+}
