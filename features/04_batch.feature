@@ -92,3 +92,16 @@ Scenario: Edit icon functionality on batch page
   | details |
   | batch details |
   | batch name value field is disabled for editing |
+
+@editIconOnBatchPage
+Scenario Outline: Validate editing description and No. of classes fields with "<details>" in the pop up
+  When Admin clicks on edit icon on any row of the batch table
+  When Admin updates any fields with "<details>" on batch details dialog box
+  Then Admin should get "<popup>" on batch page
+  Examples:
+  | details | popup |
+  | invalid data and click save button | Error msg under respective field |
+  | valid data and click save button   | Successful msg for editing batch |
+  | valid data and click cancel button | batch details popup closes without editing batch |
+
+  #---------------------Delete batch validation------------------------#

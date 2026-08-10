@@ -44,8 +44,10 @@ export class BatchPage {
     this.errorMsgUnderBatchName = page.getByText('This field accept only');
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.cancelButton = page.getByRole('button', { name: 'Cancel' });
-    this.failPopup = page.getByText('FailedBatch Creation Failed');
-    this.successPopup = page.getByText('SuccessfulBatch Created');
+    //this.failPopup = page.getByText('FailedBatch Creation Failed');
+    this.failPopup = page.getByText('Failed', { exact: true });
+    this.successPopup = page.getByText('Successful', { exact: true });
+    //this.successPopup = page.getByText('SuccessfulBatch Created');
     this.statusErrorPopup = page.getByText('Status is required.');
     this.dialogCloseButton = page.getByLabel('Batch Details').getByRole('button').filter({ hasText: /^$/ });
   }
