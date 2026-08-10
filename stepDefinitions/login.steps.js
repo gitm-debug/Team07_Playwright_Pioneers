@@ -1,5 +1,27 @@
 import { expect } from '@playwright/test';
 import { Given, When, Then } from '../Fixture/fixture.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const loginData = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'test-data', 'loginCases.json'), 'utf8')
+);
+
+function getLoginCase(name) {
+  const entry = loginData.cases.find((c) => c.scenario === name);
+  if (!entry) throw new Error(`No login test case found for scenario: "${name}"`);
+  return entry;
+}
+
+function resolveCredentials(c) {
+  return {
+    email: c.email === 'valid@email.com' ? process.env.EMAIL : c.email,
+    password: c.password === 'pass123' ? process.env.PASSWORD : c.password,
+    role: c.role === 'Admin' ? process.env.ROLE : c.role,
+  };
+}
 
 Given('Admin is on the browser', async ({ page }) => {
   // Browser is ready
@@ -133,14 +155,15 @@ Then('admin should land on home page', async ({ page }) => {
   expect(isLoginPageGone).toBeTruthy();
 });
 
-When('Admin enters email {string} and password {string} and role {string} and clicks login', async ({ loginFixture }, email, password, role) => {
-  const actualEmail = email === 'valid@email.com' ? process.env.EMAIL : email;
-  const actualPassword = password === 'pass123' ? process.env.PASSWORD : password;
-  const actualRole = role === 'Admin' ? process.env.ROLE : role;
-  await loginFixture.loginWithCredentials(actualEmail, actualPassword, actualRole);
+When('Admin enters the credentials for {string} and clicks login', async ({ loginFixture }, scenario) => {
+  const entry = getLoginCase(scenario);
+  const { email, password, role } = resolveCredentials(entry);
+  await loginFixture.loginWithCredentials(email, password, role);
 });
 
-Then('Admin should see {string}', async ({ loginFixture, page }, expected) => {
+Then('Admin should see the result for {string}', async ({ loginFixture, page }, scenario) => {
+  const entry = getLoginCase(scenario);
+  const expected = entry.expected;
   if (expected === 'home page') {
     await loginFixture.page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
     const isLoginPageGone = !page.url().includes('/login');
