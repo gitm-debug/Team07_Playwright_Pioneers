@@ -1,0 +1,2 @@
+ Edit dialog opened
+Program Details dialog is displayed

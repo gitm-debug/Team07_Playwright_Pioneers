@@ -1,0 +1,5 @@
+ Searching by partial: "azur"
+Context set: currentSearchTerm = azur
+Context set: currentSearchType = partial
+Verifying search results for: "partial"
+Programs verified by partial name: "azur"
