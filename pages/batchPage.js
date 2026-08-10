@@ -189,4 +189,44 @@ export class BatchPage {
   async clickDialogCloseButton() {
     await this.dialogCloseButton.click();
   }
+
+  async clickNextPage() {
+    await this.nextPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickLastPage() {
+    await this.lastPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickPrevPage() {
+    await this.previousPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickFirstPage() {
+    await this.firstPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async isNextPageDisabled() {
+    return await this.nextPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isPrevPageDisabled() {
+    return await this.previousPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isFirstPageDisabled() {
+    return await this.firstPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isLastPageDisabled() {
+    return await this.lastPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async getTableRowCount() {
+    return await this.batchTableRows.count();
+  }
 }

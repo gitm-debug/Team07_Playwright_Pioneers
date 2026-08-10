@@ -465,3 +465,106 @@ Then('Admin should see the Batch Status is sorted in Descending order', async ({
   expect(statuses.every(s => s.length > 0)).toBe(true);
   expect(batchFixture.isSortedDescending(statuses)).toBe(true);
 });
+
+// Batch Pagination
+let firstRowBefore;
+
+Given('Admin is on batch page with multiple batch records', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const rowCount = await batchFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+});
+
+Given('Admin is on any page except the last page of batch table', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const isLastDisabled = await batchFixture.isLastPageDisabled();
+  if (!isLastDisabled) {
+    await batchFixture.clickLastPage();
+    await batchFixture.clickPrevPage();
+  }
+});
+
+Given('Admin is on the batch table on any page except the first page', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  await batchFixture.clickNextPage();
+});
+
+Given('Admin is on any page except the first page of batch table', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  await batchFixture.clickNextPage();
+});
+
+Given('Admin is on the batch page with multiple pages of batch record', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const rowCount = await batchFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+  const isNextDisabled = await batchFixture.isNextPageDisabled();
+  if (!isNextDisabled) {
+    await batchFixture.clickNextPage();
+  }
+});
+
+When('Admin clicks the next page option \\(>\\) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickNextPage();
+});
+
+When('Admin clicks the last page option \\(>>\\) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickLastPage();
+});
+
+When('Admin clicks the previous page option \\(<\\) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickPrevPage();
+});
+
+When('Admin clicks the first page option \\(<<\\) in the batch pagination control', async ({batchFixture}) => {
+  await batchFixture.clickFirstPage();
+});
+
+When('Admin clicks first page link on the batch data table', async ({batchFixture}) => {
+  await batchFixture.clickFirstPage();
+});
+
+Then('Admin should see the Next enabled link', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isNextPageDisabled();
+  expect(isDisabled).toBe(false);
+});
+
+Then('Admin should see the last page link with next page link disabled', async ({batchFixture}) => {
+  const isNextDisabled = await batchFixture.isNextPageDisabled();
+  expect(isNextDisabled).toBe(true);
+  const isLastDisabled = await batchFixture.isLastPageDisabled();
+  expect(isLastDisabled).toBe(true);
+});
+
+Then('Admin should see the previous page on the batch table', async ({batchFixture}) => {
+  const firstRowAfter = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+});
+
+Then('Admin should see the very first page on the batch data table', async ({batchFixture}) => {
+  const isFirstDisabled = await batchFixture.isFirstPageDisabled();
+  expect(isFirstDisabled).toBe(true);
+});
+
+Then('Admin should see the Previous arrow \\(<\\) disabled on batch page', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isPrevPageDisabled();
+  expect(isDisabled).toBe(true);
+});
+
+Then('Admin should see the First page arrow \\(<<\\) disabled on batch page', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isFirstPageDisabled();
+  expect(isDisabled).toBe(true);
+});
+
+Then('Admin should see the Next arrow \\(>\\) enabled on batch page', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isNextPageDisabled();
+  expect(isDisabled).toBe(false);
+});
+
+Then('Admin should see the Last page arrow \\(>>\\) enabled on batch page', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isLastPageDisabled();
+  expect(isDisabled).toBe(false);
+});
