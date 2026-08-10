@@ -41,7 +41,7 @@ export const test = base.extend({
   },
   logoutFixture: async ({ page }, use) => {
     await use(new LogoutPage(page));
-  },
+  }
 });
 
 export const { Given, When, Then, BeforeAll, AfterAll, Before, After } = createBdd(test);

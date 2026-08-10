@@ -242,3 +242,41 @@ Then('Admin should see details on batch details dialog box', async ({batchFixtur
         }
     }
 });
+
+When('Admin updates any fields with {string} on batch details dialog box', async ({batchFixture}, details) => {
+    if(details === 'invalid data and click save button') {
+        const randomNumber = Math.floor(Math.random() * 5) + 1;
+        console.log(randomNumber);
+        batchFixture.getEditButtonForRow(randomNumber).click();
+        await (batchFixture.descriptionTextBox).fill("@ api learning 123");
+        await batchFixture.clickSaveButton();
+    }
+    else if(details === 'valid data and click save button') {
+        const randomNumber = Math.floor(Math.random() * 5) + 1;
+        console.log(randomNumber);
+        batchFixture.getEditButtonForRow(randomNumber).click();
+        await (batchFixture.descriptionTextBox).fill("api learning 123");
+        await (batchFixture.noOfClassesInputBox).fill("20");
+        await batchFixture.clickSaveButton();
+    }
+    else if(details === 'valid data and click cancel button') {
+        const randomNumber = Math.floor(Math.random() * 5) + 1;
+        console.log(randomNumber);
+        batchFixture.getEditButtonForRow(randomNumber).click();
+        await (batchFixture.descriptionTextBox).fill("api learning 123");
+        await (batchFixture.noOfClassesInputBox).fill("20");
+        await batchFixture.clickCancelButton();
+    }
+});
+
+Then('Admin should get {string} on batch page', async ({batchFixture}, popup) => {
+    if(popup === 'Error msg under respective field') {
+        await expect(batchFixture.failPopup).toBeVisible();
+    }
+    else if(popup === 'Successful msg for editing batch') {
+        await expect(batchFixture.successPopup).toBeVisible();
+    }
+    else if(popup === 'batch details popup closes without editing batch') {
+        await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
+    }
+});
