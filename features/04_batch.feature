@@ -70,13 +70,13 @@ Scenario: Batch name Prefix cannot be edited
 @batchDetailsMandatoryFieldsValidation
 Scenario Outline: Add new batch only with "<data>"
   When Admin clicks on Add New batch under the batch menu bar
-  When Admin enters the "<data>" to create new batch
+  When Admin enters the "<data>" to create new batch using "<testDataKey>"
   Then Admin should get a "<popup>" on batch page for "<data>"
   Examples: 
-  | data                                    | popup                 |
-  | data to mandatory fields and click save | successful message |
-  | leaves blank one of the mandatory fields | error message on respective field |
-  | valid data to all mandatory fields and click cancel | batch details popup closes without creating batch |
+  | data                                                | popup                             | testDataKey |
+  | data to mandatory fields and click save             | successful message                |   validMandatoryData |
+  | leaves blank one of the mandatory fields            | error message on respective field |   blankMandatoryField |
+  | valid data to all mandatory fields and click cancel | batch details popup closes without creating batch | validMandatoryData |
 
 @batchDetailsCloseIcon
 Scenario: Close icon functionality
@@ -96,13 +96,13 @@ Scenario: Edit icon functionality on batch page
 @editIconOnBatchPage
 Scenario Outline: Validate editing description and No. of classes fields with "<details>" in the pop up
   When Admin clicks on edit icon on any row of the batch table
-  When Admin updates any fields with "<details>" on batch details dialog box
+  When Admin updates any fields with "<details>" on batch details dialog box using "<testDataKey>"
   Then Admin should get "<popup>" on batch page
   Examples:
-  | details | popup |
-  | invalid data and click save button | Error msg under respective field |
-  | valid data and click save button   | Successful msg for editing batch |
-  | valid data and click cancel button | batch details popup closes without editing batch |
+  | details                            | popup                            | testDataKey |
+  | invalid data and click save button | Error msg under respective field | updateWithInvalidData |
+  | valid data and click save button   | Successful msg for editing batch | updateWithValidData |
+  | valid data and click cancel button | batch details popup closes without editing batch | updateWithValidData |
 
   # ---------------------Delete batch validation------------------------#
 @displayDeleteConfirm
