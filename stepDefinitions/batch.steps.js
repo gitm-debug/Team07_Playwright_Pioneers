@@ -379,10 +379,8 @@ Then('Admin should see the Batch Name is sorted in Ascending order', async ({bat
 });
 
 Given('Admin is in batch page where Batch names are sorted in ascending order', async ({batchFixture}) => {
-  const names = await batchFixture.getBatchNames();
-  if (!batchFixture.isSortedAscending(names)) {
-    await batchFixture.clickBatchNameArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchNameArrow();
   const sortedNames = await batchFixture.getBatchNames();
   expect(batchFixture.isSortedAscending(sortedNames)).toBe(true);
 });
@@ -406,10 +404,8 @@ Then('Admin should see the Batch Description is sorted in Ascending order', asyn
 });
 
 Given('Admin is in batch page where Batch descriptions are sorted in ascending order', async ({batchFixture}) => {
-  const descriptions = await batchFixture.getBatchDescriptions();
-  if (!batchFixture.isSortedAscending(descriptions)) {
-    await batchFixture.clickBatchDescriptionArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchDescriptionArrow();
   const sortedDescriptions = await batchFixture.getBatchDescriptions();
   expect(batchFixture.isSortedAscending(sortedDescriptions)).toBe(true);
 });
@@ -432,10 +428,8 @@ Then('Admin should see the Number of Classes is sorted in Ascending order', asyn
 });
 
 Given('Admin is in batch page where Number of classes are sorted in ascending order', async ({batchFixture}) => {
-  const classes = await batchFixture.getNoOfClasses();
-  if (!batchFixture.isSortedAscendingNumeric(classes)) {
-    await batchFixture.clickNoOfClassesArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickNoOfClassesArrow();
   const sortedClasses = await batchFixture.getNoOfClasses();
   expect(batchFixture.isSortedAscendingNumeric(sortedClasses)).toBe(true);
 });
@@ -459,10 +453,8 @@ Then('Admin should see the Batch Status is sorted in Ascending order', async ({b
 });
 
 Given('Admin is in batch page where Batch status are sorted in ascending order', async ({batchFixture}) => {
-  const statuses = await batchFixture.getBatchStatuses();
-  if (!batchFixture.isSortedAscending(statuses)) {
-    await batchFixture.clickBatchStatusArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchStatusArrow();
   const sortedStatuses = await batchFixture.getBatchStatuses();
   expect(batchFixture.isSortedAscending(sortedStatuses)).toBe(true);
 });

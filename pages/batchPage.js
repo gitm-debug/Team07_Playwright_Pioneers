@@ -101,18 +101,22 @@ export class BatchPage {
 
   async clickBatchNameArrow() {
     await this.page.click(this.batchNameSortHeader);
+    await this.page.waitForTimeout(500);
   }
 
   async clickBatchDescriptionArrow() {
     await this.page.click(this.batchDescriptionSortHeader);
+    await this.page.waitForTimeout(500);
   }
 
   async clickBatchStatusArrow() {
     await this.page.click(this.batchStatusSortHeader);
+    await this.page.waitForTimeout(500);
   }
 
   async clickNoOfClassesArrow() {
     await this.page.click(this.batchNoOfClassesSortHeader);
+    await this.page.waitForTimeout(500);
   }
 
   async getBatchNames() {
