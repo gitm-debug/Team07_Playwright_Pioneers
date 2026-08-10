@@ -1,0 +1,1 @@
+  ➜ [2026-08-10T23:44:05.109Z] [STEP] Admin is on home page after login
