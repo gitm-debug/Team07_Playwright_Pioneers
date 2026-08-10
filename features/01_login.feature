@@ -85,17 +85,17 @@ Feature: Login Page - UI Verification
     Then Admin should see password text in gray color
 
   Scenario Outline: Login with <scenario>
-    When Admin enters email "<email>" and password "<password>" and role "<role>" and clicks login
-    Then Admin should see "<expected>"
+    When Admin enters the credentials for "<scenario>" and clicks login
+    Then Admin should see the result for "<scenario>"
 
     Examples:
-      | scenario                    | email            | password  | role  | expected                                 |
-      | valid credentials           | valid@email.com  | pass123   | Admin | home page                                |
-      | special chars in username   | !@#$%^&*()       | pass123   | Admin | Invalid username and password please try again |
-      | empty username              |                  | pass123   | Admin | Please enter your user name              |
-      | empty password              | valid@email.com  |           | Admin | Please enter your password               |
-      | wrong password              | valid@email.com  | wrong     | Admin | Invalid username and password            |
-      | no role selected            | valid@email.com  | pass123   |       | Please select your Role                  |
-      | invalid role                | valid@email.com  | pass123   | Staff | Please select correct role               |
-      | using keyboard              | valid@email.com  | pass123   | Admin | home page                                |
-      | using mouse                 | valid@email.com  | pass123   | Admin | home page                                |
+      | scenario                  |
+      | valid credentials         |
+      | special chars in username |
+      | empty username            |
+      | empty password            |
+      | wrong password            |
+      | no role selected          |
+      | invalid role              |
+      | using keyboard            |
+      | using mouse               |

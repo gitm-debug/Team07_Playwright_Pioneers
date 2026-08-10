@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx bddgen && playwright test"
+    "test-noauth": "npx bddgen && npx playwright test --project=chromium-noauth",
+    "test-auth": "npx bddgen && npx playwright test --project=chromium-auth"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,6 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
-    "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2",
     "playwright-bdd": "^9.2.0"
   },
