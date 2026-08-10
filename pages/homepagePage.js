@@ -1,61 +1,61 @@
-import { expect } from '@playwright/test';
 import logger from '../utils/logger.js';
 
 export class HomePage {
 constructor(page) {
 this.page = page;
-this.lmsTitle = page.getByText(' LMS - Learning Management System ',{ exact: false }); // LMS Title
-this.navigationItems = page.locator('mat-toolbar a');// navigation
+this.lmsTitle = page.locator('mat-toolbar span').first(); // LMS Title
+this.navigationItems = page.locator('mat-toolbar button');// navigation
+this.navigationBar = page.locator('mat-toolbar');
 
-this.welcomeMessage = page.locator('text=/Welcome/i'); //welcome message
-this.userStatusChart = page.locator('canvas.chartjs-render-monitor');
-//this.activeInactiveChart = page.locator('canvas').first(); // charts
+this.welcomeMessage = page.locator('app-admindata .top'); //welcome message
+// bar chart = Active/Inactive users, doughnut = user status
+this.userStatusChart = page.locator('canvas[ng-reflect-chart-type="bar"]');
 this.chartLegends = page.locator('.legend, .recharts-legend-item');
 this.activeLegend = page.getByText('Active', {exact:true} );
 this.undefinedLegend = page.getByText('Undefined', {exact:true});
 
-this.userCard = page.locator('.card').filter({has: page.getByText('Users')});
-this.staffCard = page.locator('.card').filter({has: page.getByText('Staff')});
-this.batchCard = page.locator('.card').filter({has: page.getByText('Batch')});
-this.programCard = page.locator('.card').filter({has: page.getByText('Program')});
+this.userCard = page.locator('.widget.green');
+this.staffCard = page.locator('.widget.yellow');
+this.batchCard = page.locator('.widget.red');
+this.programCard = page.locator('.widget.blue');
 
-
-this.staffTable = page.locator('table');
-this.staffTableHeaders = page.locator('table thead tr th');
-this.staffTableRows = page.locator('table tbody tr');
-//this.pagination = page.locator('.pagination');
-this.pagination = page.locator('.pagination').first();
-this.paginationText = page.locator('text=/of/i');
+this.staffTable = page.locator('mat-table');
+this.staffTableHeaders = page.locator('mat-table mat-header-cell');
+this.staffTableRows = page.locator('mat-table mat-row');
+this.pagination = page.locator('mat-paginator');
+this.paginationText = page.locator('.mat-paginator-range-label');
 }
 
 async getPageTitle() {return await this.lmsTitle.textContent();}
 async getLMSTitlePosition() {return await this.lmsTitle.boundingBox();}
 async getNavigationPosition() {return await this.navigationBar.boundingBox();}
-async getNavigationMenuItems() {return await this.navigationItems.allTextContents();}
+async getNavigationMenuItems() {
+  const items = await this.navigationItems.allTextContents();
+  return items.map(t => t.trim());
+}
 
-async getWelcomeMessage() {return await this.welcomeMessage.textContent();}
+async getWelcomeMessage() {return (await this.welcomeMessage.textContent()).trim();}
 
-//async isActiveInactiveChartVisible() {return await this.activeInactiveChart.isVisible();}
 async isUserStatusChartVisible() {return await this.userStatusChart.isVisible();}
 async getChartLegends() {return await this.chartLegends.allTextContents();}
 async clickChartLegend(name) {await this.page.getByText(name,{exact:true}).click();}
-async isActiveBarVisible() {return await this.page.locator('[data-label="Active"]').isVisible().catch(()=>false);}
-async isUndefinedBarVisible() {return await this.page.locator('[data-label="Undefined"]').isVisible().catch(()=>false);}
+async isActiveBarVisible() {return await this.activeLegend.isVisible().catch(()=>false);}
+async isUndefinedBarVisible() {return await this.undefinedLegend.isVisible().catch(()=>false);}
 
 async isUserCardVisible(){return await this.userCard.isVisible();}
-async isUserCountVisible(){return await this.userCard.locator('text=/[0-9]+/').isVisible();}
-async isUserIconVisible(){return await this.userCard.locator('svg, i').isVisible();}
+async isUserCountVisible(){return await this.userCard.locator('.value .top').isVisible();}
+async isUserIconVisible(){return await this.userCard.locator('.icon i').isVisible();}
 async clickUserCard(){await this.userCard.click();}
 async isStaffCardVisible(){return await this.staffCard.isVisible();}
 
 async isBatchCardVisible(){return await this.batchCard.isVisible();}
-async isBatchCountVisible(){return await this.batchCard.locator('text=/[0-9]+/').isVisible();}
-async isBatchIconVisible(){return await this.batchCard.locator('svg,i').isVisible();}
+async isBatchCountVisible(){return await this.batchCard.locator('.value .top').isVisible();}
+async isBatchIconVisible(){return await this.batchCard.locator('.icon i').isVisible();}
 async clickBatchCard(){await this.batchCard.click();}
 
 async isProgramCardVisible(){return await this.programCard.isVisible();}
-async isProgramCountVisible(){return await this.programCard.locator('text=/[0-9]+/').isVisible();}
-async isProgramIconVisible(){return await this.programCard.locator('svg,i').isVisible();}
+async isProgramCountVisible(){return await this.programCard.locator('.value .top').isVisible();}
+async isProgramIconVisible(){return await this.programCard.locator('.icon i').isVisible();}
 async clickProgramCard(){await this.programCard.click();}
 
 async isStaffTableVisible(){return await this.staffTable.isVisible();}
@@ -63,6 +63,6 @@ async getStaffTableHeaders(){return await this.staffTableHeaders.allTextContents
 async isPaginationVisible(){return await this.pagination.isVisible();}
 
 async isStaffTableEmpty(){return (await this.staffTableRows.count()) === 0;}
-async getPaginationText(){return await this.paginationText.textContent();}
+async getPaginationText(){return (await this.paginationText.textContent()).trim();}
 
 }
