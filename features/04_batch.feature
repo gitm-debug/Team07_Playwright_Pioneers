@@ -4,7 +4,7 @@ Background:	Admin is logged in to LMS Portal
   Given Admin is on home page after login
   When Admin clicks Batch on the navigation bar
 
-#----------Batch page navigation ------------#
+# ----------Batch page navigation ------------#
 @navigateToBatchPage
 Scenario: Admin navigates to Batch page
   Then Admin should be in the Manage Batch Page
@@ -104,4 +104,83 @@ Scenario Outline: Validate editing description and No. of classes fields with "<
   | valid data and click save button   | Successful msg for editing batch |
   | valid data and click cancel button | batch details popup closes without editing batch |
 
-  #---------------------Delete batch validation------------------------#
+  # ---------------------Delete batch validation------------------------#
+@displayDeleteConfirm
+Scenario: Display Delete Confirmation
+  When Admin clicks on delete icon on any row of the batch table
+  Then Admin should see the confirm alert box with yes and no button on batch page
+
+@deleteBatchSuccessfully
+Scenario: Delete batch Successfully on batch page
+  When Admin clicks on delete icon on any row of the batch table
+  When Admin clicks yes button after clicking delete icon
+  Then Admin should see the successful message and the batch should be deleted
+
+@cancelBatch
+Scenario: Cancel batch deletion on batch page
+  When Admin clicks on delete icon on any row of the batch table
+  When Admin clicks  no button after clicking delete icon
+  Then Admin should see the alert box closed and the batch is not deleted
+
+@closeIconDeleteBatch
+Scenario: close icon functionality for delete batch
+  When Admin clicks on delete icon on any row of the batch table
+  When Admin clicks on the close icon on confirm alert box
+  Then Admin should see the alert box closed and see batch page
+
+  # ----------Delete multiple batches with checkbox----------------#
+@deleteMultipleBatchValidation
+Scenario: Select multiple batch on batch page
+  When Admin selects more than one batch by clicking on the checkbox
+  Then Admin should see the Multiple delete box enabled under manage batch 
+
+@deleteMultipleBatchValidation
+Scenario: Delete Multiple Batches on batch page
+  When Admin selects more than one batch by clicking on the checkbox
+  When Admin clicks on the delete button on the left top of the batch page
+  Then Admin lands on Confirmation box with yes or no to delete batch
+
+# ------------- Manage batch - sorting ---------------------- #
+@sortBatchNameInAscending
+Scenario: Sorting of Batch Name in Ascending order
+  When Admin clicks on Arrow next to batch name
+  Then Admin should see the Batch Name is sorted in Ascending order
+
+@sortBatchNameInDescending
+Scenario: Sorting of Batch Name in Descending order
+  Given Admin is in batch page where Batch names are sorted in ascending order
+  When Admin clicks on Arrow next to batch name
+  Then Admin should see the Batch Name is sorted in Descending order
+
+@sortBatchDescriptionInAscending
+Scenario: Sorting of Batch Description in Ascending order
+  When Admin clicks on Arrow next to batch description
+  Then Admin should see the Batch Description is sorted in Ascending order
+
+@sortBatchDescriptionInDescending
+Scenario: Sorting of Batch Description in Descending order
+  Given Admin is in batch page where Batch descriptions are sorted in ascending order
+  When Admin clicks on Arrow next to batch description
+  Then Admin should see the Batch Description is sorted in Descending order
+
+@sortNoOfClassesInAscending
+Scenario: Sorting of Number of classes in Ascending order
+  When Admin clicks on Arrow next to number of classes
+  Then Admin should see the Number of Classes is sorted in Ascending order
+
+@sortNoOfClassesInDescending
+Scenario: Sorting of Number of classes in Descending order
+  Given Admin is in batch page where Number of classes are sorted in ascending order
+  When Admin clicks on Arrow next to number of classes
+  Then Admin should see the Number of Classes is sorted in Descending order
+
+@sortBatchStatusInAscending
+Scenario: Sorting of Batch status in Ascending order
+  When Admin clicks on Arrow next to batch status
+  Then Admin should see the Batch Status is sorted in Ascending order
+
+@sortBatchStatusInDescending
+Scenario: Sorting of Batch status in Descending order
+  Given Admin is in batch page where Batch status are sorted in ascending order
+  When Admin clicks on Arrow next to batch status
+  Then Admin should see the Batch Status is sorted in Descending order

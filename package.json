@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx bddgen && playwright test"
+    "test-noauth": "npx bddgen && npx playwright test --project=chromium-noauth",
+    "test-auth": "npx bddgen && npx playwright test --project=chromium-auth"
   },
   "keywords": [],
   "author": "",
