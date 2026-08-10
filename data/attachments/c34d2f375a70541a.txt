@@ -1,4 +1,0 @@
-  ➜ [2026-08-10T17:15:58.692Z] [STEP] Admin is on home page after login
-  ➜ [2026-08-10T17:15:59.640Z] [STEP] Admin clicks Batch on the navigation bar
-  ➜ [2026-08-10T17:15:59.769Z] [STEP] Admin should be in the Manage Batch Page
-[2026-08-10T17:15:59.769Z] [INFO] Current URL: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/batch

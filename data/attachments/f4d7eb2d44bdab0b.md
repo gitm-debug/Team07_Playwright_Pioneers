@@ -1,0 +1,389 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: features/04_batch.feature.spec.js >> Batch Page UI >> Add new batch only with "<data>" >> Add new batch only with "data to mandatory fields and click save"
+- Location: .features-gen/features/04_batch.feature.spec.js:53:5
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByText('Successful', { exact: true })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByText('Successful', { exact: true })
+
+```
+
+```yaml
+- text: LMS - Learning Management System
+- button "Home"
+- button "Program"
+- button "Batch"
+- button "Logout"
+- text: Manage Batch
+- button [disabled]
+- text: 
+- textbox "Search..."
+- grid:
+  - rowgroup:
+    - row "Batch Name  Batch Description  Batch Status  No Of Classes  Program Name  Edit / Delete":
+      - columnheader:
+        - checkbox
+        - checkbox
+      - columnheader "Batch Name "
+      - columnheader "Batch Description "
+      - columnheader "Batch Status "
+      - columnheader "No Of Classes "
+      - columnheader "Program Name "
+      - columnheader "Edit / Delete"
+  - rowgroup:
+    - row "BDDTeamLMS_003 Active 4 BDDTeamLMS":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "BDDTeamLMS_003"
+      - gridcell
+      - gridcell "Active"
+      - gridcell "4"
+      - gridcell "BDDTeamLMS"
+      - gridcell:
+        - button
+        - button
+    - row "BDDTeamLMS_997 api learning 123 Active 20 BDDTeamLMS":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "BDDTeamLMS_997"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "BDDTeamLMS"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44174 api learning 123 Active 20 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44174"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_4418 api learning 123 Active 20 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_4418"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44198 api learning 123 Active 20 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44198"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_4420 api learning 123 Active 20 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_4420"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44201 api learning 123 Active 20 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44201"
+      - gridcell "api learning 123"
+      - gridcell "Active"
+      - gridcell "20"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44208 Updated valid descri Active 12 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44208"
+      - gridcell "Updated valid descri"
+      - gridcell "Active"
+      - gridcell "12"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44213 Active 9 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44213"
+      - gridcell
+      - gridcell "Active"
+      - gridcell "9"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+    - row "CypressLMSApplication_44225 Active 9 CypressLMSApplication":
+      - gridcell:
+        - checkbox
+        - checkbox
+      - gridcell "CypressLMSApplication_44225"
+      - gridcell
+      - gridcell "Active"
+      - gridcell "9"
+      - gridcell "CypressLMSApplication"
+      - gridcell:
+        - button
+        - button
+- text: Showing 1 to 10 of 142 entries
+- button "" [disabled]
+- button "" [disabled]
+- button "1"
+- button "2"
+- button "3"
+- button "4"
+- button "5"
+- button ""
+- button ""
+- text: In total there are 142 batches.
+```
+
+# Test source
+
+```ts
+  111 |     await batchFixture.clickBatchTab();
+  112 |     await batchFixture.clickAddNewBatchSubMenu();
+  113 | });
+  114 | 
+  115 | Then('Admin should see Batch Details dialog box', async ({batchFixture}) => {
+  116 |     await expect(batchFixture.batchDetailsDialog).toBeVisible();
+  117 | });
+  118 | 
+  119 | Then('Admin should see the following fields under Batch Details dialog box', async ({batchFixture}, dataTable) => {
+  120 |     for (const [row] of dataTable.rows()) {
+  121 |         const field = row.trim();
+  122 |         switch (field) {
+  123 |             case 'Batch Name':
+  124 |                 await expect(batchFixture.batchNameField).toBeVisible();
+  125 |                 break;
+  126 |             case 'Description':
+  127 |                 await expect(batchFixture.descriptionField).toBeVisible();
+  128 |                 break;
+  129 |             case 'Number of Classes':
+  130 |                 await expect(batchFixture.noOfClassesField).toBeVisible();
+  131 |                 break;
+  132 |             case 'program name with dropdown':
+  133 |                 await expect(batchFixture.programNameField).toBeVisible();
+  134 |                 await expect(batchFixture.dropdownUnderProgramName).toBeVisible();
+  135 |                 break;
+  136 |             case 'Status radio buttons':
+  137 |                 await expect(batchFixture.statusField).toBeVisible();
+  138 |                 await expect(batchFixture.activeRadioButton).toBeVisible();
+  139 |                 await expect(batchFixture.inactiveRadioButton).toBeVisible();
+  140 |                 break;
+  141 |             default:
+  142 |                 throw new Error(`Unknown field under Batch Details dialog box: ${field}`);
+  143 |         }
+  144 |     }
+  145 | });
+  146 | 
+  147 | When('Admin selects program name present in the dropdown', async ({batchFixture, Page}) => {
+  148 |     //await Page.pause();
+  149 |     const programName = globalStorage.getProgramForBatch();
+  150 |     logger.info(`Program name from global storage is ${programName}`);
+  151 |     await batchFixture.selectProgramName('Python');
+  152 | });
+  153 | 
+  154 | Then('Admin should see selected program name in the batch name prefix box', async ({batchFixture}) => {
+  155 |     await expect(batchFixture.batchNamePrefixBox).toHaveValue(/Python/i);
+  156 |     //await expect(batchFixture.batchNamePrefixBox).toHaveValue(globalStorage.getProgramForBatch());
+  157 | });
+  158 | 
+  159 | When('Admin enters alphabets in the batch name suffix box', async ({batchFixture}) => {
+  160 |     await batchFixture.batchNameSuffixBox.fill('abc');
+  161 | });
+  162 | 
+  163 | Then('Admin should get error message below the text box of respective field', async ({batchFixture}) => {
+  164 |     await expect(batchFixture.errorMsgUnderBatchName).toBeVisible();
+  165 | });
+  166 | 
+  167 | When('Admin enters alphabets in batch name prefix box', async ({batchFixture}) => {
+  168 |     //await batchFixture.batchNamePrefixBox.fill('abc');
+  169 | });
+  170 | 
+  171 | Then('Admin should see empty text box under the batch name prefix field', async ({batchFixture}) => {
+  172 |     await expect(batchFixture.batchNamePrefixBox).toBeEmpty();
+  173 |     await expect(batchFixture.batchNamePrefixBox).toHaveAttribute('readonly');
+  174 | });
+  175 | 
+  176 | When('Admin enters the data only to the mandatory fields and clicks save button to create new batch', async ({batchFixture}) => {
+  177 |     await batchFixture.selectProgramName('Python');
+  178 |     await batchFixture.batchNameSuffixBox.fill('111');
+  179 |     await batchFixture.activeRadioButton.click();
+  180 |     await batchFixture.noOfClassesInputBox.fill('5');
+  181 |     await batchFixture.clickSaveButton();
+  182 | });
+  183 | 
+  184 | Then('Admin should get a successful message with created batch', async ({batchFixture}) => {
+  185 |     await expect(batchFixture.successPopup).toBeVisible();
+  186 | });
+  187 | 
+  188 | When('Admin enters the {string} to create new batch', async ({batchFixture}, data) => {
+  189 |     if (data === 'data to mandatory fields and click save') {
+  190 |         await batchFixture.selectProgramName('Python');
+  191 |         await batchFixture.batchNameSuffixBox.fill('111');
+  192 |         await batchFixture.activeRadioButton.click();
+  193 |         await batchFixture.noOfClassesInputBox.fill('5');
+  194 |         await batchFixture.clickSaveButton();
+  195 |     } else if (data === 'leaves blank one of the mandatory fields') {
+  196 |         await batchFixture.selectProgramName('Python');
+  197 |         await batchFixture.batchNameSuffixBox.fill('111');
+  198 |         await batchFixture.noOfClassesInputBox.fill('5');
+  199 |         await batchFixture.clickSaveButton();
+  200 |     } else if (data === 'valid data to all mandatory fields and click cancel') {
+  201 |         await batchFixture.selectProgramName('Python');
+  202 |         await batchFixture.batchNameSuffixBox.fill('111');
+  203 |         await batchFixture.activeRadioButton.click();
+  204 |         await batchFixture.noOfClassesInputBox.fill('5');
+  205 |         await batchFixture.clickCancelButton();
+  206 |     }
+  207 | });
+  208 | 
+  209 | Then('Admin should get a {string} on batch page for {string}', async ({batchFixture}, popup, data) => {
+  210 |     if (popup === 'successful message') {
+> 211 |         await expect(batchFixture.successPopup).toBeVisible();
+      |                                                 ^ Error: expect(locator).toBeVisible() failed
+  212 |     } else if (popup === 'error message on respective field') {
+  213 |         await expect(batchFixture.statusErrorPopup).toBeVisible();
+  214 |     } else if (popup === 'batch details popup closes without creating batch') {
+  215 |         await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
+  216 |     }
+  217 | });
+  218 | 
+  219 | When('Admin clicks on close icon on the top right corner of the batch details dialog box', async ({batchFixture}) => {
+  220 |     await batchFixture.clickDialogCloseButton();
+  221 | });
+  222 | 
+  223 | Then('Admin should see batch details dialog box closed without creating new batch', async ({batchFixture}) => {
+  224 |     await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
+  225 | });
+  226 | 
+  227 | When('Admin clicks on edit icon on any row of the batch table', async ({batchFixture}) => {
+  228 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  229 |     console.log(randomNumber);
+  230 |     batchFixture.getEditButtonForRow(randomNumber).click();
+  231 | });
+  232 | 
+  233 | Then('Admin should see details on batch details dialog box', async ({batchFixture}, dataTable) => {
+  234 |     for(const [row] of dataTable.rows()) {
+  235 |         const detail = row.trim();
+  236 |         switch (detail) {
+  237 |             case 'batch details':
+  238 |                 await expect(batchFixture.batchDetailsDialog).toBeVisible();
+  239 |                 break;
+  240 |             case 'batch name value field is disabled for editing':
+  241 |                 await expect(batchFixture.batchNameBox).toBeDisabled();
+  242 |                 break;
+  243 |             default:
+  244 |                 throw new Error(`Unknown detail ${detail}`);
+  245 |         }
+  246 |     }
+  247 | });
+  248 | 
+  249 | When('Admin updates any fields with {string} on batch details dialog box', async ({batchFixture}, details) => {
+  250 |     if(details === 'invalid data and click save button') {
+  251 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  252 |         console.log(randomNumber);
+  253 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  254 |         await (batchFixture.descriptionTextBox).fill("@ api learning 123");
+  255 |         await batchFixture.clickSaveButton();
+  256 |     }
+  257 |     else if(details === 'valid data and click save button') {
+  258 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  259 |         console.log(randomNumber);
+  260 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  261 |         await (batchFixture.descriptionTextBox).fill("api learning 123");
+  262 |         await (batchFixture.noOfClassesInputBox).fill("20");
+  263 |         await batchFixture.clickSaveButton();
+  264 |     }
+  265 |     else if(details === 'valid data and click cancel button') {
+  266 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  267 |         console.log(randomNumber);
+  268 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  269 |         await (batchFixture.descriptionTextBox).fill("api learning 123");
+  270 |         await (batchFixture.noOfClassesInputBox).fill("20");
+  271 |         await batchFixture.clickCancelButton();
+  272 |     }
+  273 | });
+  274 | 
+  275 | Then('Admin should get {string} on batch page', async ({batchFixture}, popup) => {
+  276 |     if(popup === 'Error msg under respective field') {
+  277 |         await expect(batchFixture.failPopup).toBeVisible();
+  278 |     }
+  279 |     else if(popup === 'Successful msg for editing batch') {
+  280 |         await expect(batchFixture.successPopup).toBeVisible();
+  281 |     }
+  282 |     else if(popup === 'batch details popup closes without editing batch') {
+  283 |         await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
+  284 |     }
+  285 | });
+  286 | 
+  287 | When('Admin clicks on delete icon on any row of the batch table', async ({batchFixture}) => {
+  288 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  289 |     console.log(randomNumber);
+  290 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  291 | });
+  292 | 
+  293 | Then('Admin should see the confirm alert box with yes and no button on batch page', async ({batchFixture}) => {
+  294 |     await expect(batchFixture.confirmAlertBoxForDelete).toBeVisible();
+  295 |     await expect(batchFixture.yesButtonForDelete).toBeVisible();
+  296 |     await expect(batchFixture.noButtonForDelete).toBeVisible();
+  297 | });
+  298 | 
+  299 | When('Admin clicks yes button after clicking delete icon', async ({batchFixture}) => {
+  300 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  301 |     console.log(randomNumber);
+  302 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  303 |     await (batchFixture.yesButtonForDelete).click();
+  304 | });
+  305 | 
+  306 | Then('Admin should see the successful message and the batch should be deleted', async ({batchFixture}) => {
+  307 |     await expect(batchFixture.successPopup).toBeVisible();
+  308 | });
+  309 | 
+  310 | When('Admin clicks  no button after clicking delete icon', async ({batchFixture}) => {
+  311 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+```

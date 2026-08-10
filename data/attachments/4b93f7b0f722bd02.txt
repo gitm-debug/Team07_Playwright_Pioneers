@@ -1,3 +1,0 @@
-  ➜ [2026-08-10T17:16:06.032Z] [STEP] Admin is on home page after login
-  ➜ [2026-08-10T17:16:06.962Z] [STEP] Admin clicks Batch on the navigation bar
-[2026-08-10T17:16:07.425Z] [INFO] Program name from global storage is null
