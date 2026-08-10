@@ -1,0 +1,3 @@
+  ➜ [2026-08-10T22:20:54.884Z] [STEP] Admin is on home page after login
+  ➜ [2026-08-10T22:20:56.601Z] [STEP] Admin clicks Batch on the navigation bar
+[2026-08-10T22:20:57.018Z] [INFO] Program name from global storage is azure-ah
