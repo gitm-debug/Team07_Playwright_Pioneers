@@ -31,9 +31,9 @@ export class ProgramPage {
     this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
     this.tableRows = page.locator('table tbody tr');
     //-----------
-    this.programNameHeader = 'th[psortablecolumn="programName"]';
-    this.programDescriptionHeader = 'th[psortablecolumn="programDescription"]';
-    this.programStatusHeader = 'th[psortablecolumn="programStatus"]';
+    this.programNameHeader = page.locator('th[psortablecolumn="programName"]');
+    this.programDescriptionHeader = page.locator('th[psortablecolumn="programDescription"]');
+    this.programStatusHeader = page.locator('th[psortablecolumn="programStatus"]');
   }
   async navigateToProgramPage() {
     await this.programMenuBar.click();
@@ -432,15 +432,15 @@ export class ProgramPage {
   }
 
   async clickProgramNameArrow() {
-    await this.page.click(this.programNameHeader);
+    await this.programNameHeader.click();
   }
 
   async clickProgramDescriptionArrow() {
-    await this.page.click(this.programDescriptionHeader);
+    await this.programDescriptionHeader.click();
   }
 
   async clickProgramStatusArrow() {
-    await this.page.click(this.programStatusHeader);
+    await this.programStatusHeader.click();
   }
 
   async getProgramNames() {

@@ -36,10 +36,10 @@ export class BatchPage {
     this.activeRadioButton = page.locator('.p-radiobutton-box').first();
     this.inactiveRadioButton = page.locator('div:nth-child(3) > #batchStatus > .p-radiobutton > .p-radiobutton-box');
 
-    this.batchNameSortHeader = 'th[psortablecolumn="batchName"]';
-    this.batchDescriptionSortHeader = 'th[psortablecolumn="batchDescription"]';
-    this.batchStatusSortHeader = 'th[psortablecolumn="batchStatus"]';
-    this.batchNoOfClassesSortHeader = 'th[psortablecolumn="batchNoOfClasses"]';
+    this.batchNameSortHeader = page.locator('th[psortablecolumn="batchName"]');
+    this.batchDescriptionSortHeader = page.locator('th[psortablecolumn="batchDescription"]');
+    this.batchStatusSortHeader = page.locator('th[psortablecolumn="batchStatus"]');
+    this.batchNoOfClassesSortHeader = page.locator('th[psortablecolumn="batchNoOfClasses"]');
 
     this.batchNamePrefixBox = page.locator('#batchProg');
     this.batchNameSuffixBox = page.getByRole('textbox', { name: 'Batch Name *' });
@@ -100,22 +100,22 @@ export class BatchPage {
   }
 
   async clickBatchNameArrow() {
-    await this.page.click(this.batchNameSortHeader);
+    await this.batchNameSortHeader.click();
     await this.page.waitForTimeout(500);
   }
 
   async clickBatchDescriptionArrow() {
-    await this.page.click(this.batchDescriptionSortHeader);
+    await this.batchDescriptionSortHeader.click();
     await this.page.waitForTimeout(500);
   }
 
   async clickBatchStatusArrow() {
-    await this.page.click(this.batchStatusSortHeader);
+    await this.batchStatusSortHeader.click();
     await this.page.waitForTimeout(500);
   }
 
   async clickNoOfClassesArrow() {
-    await this.page.click(this.batchNoOfClassesSortHeader);
+    await this.batchNoOfClassesSortHeader.click();
     await this.page.waitForTimeout(500);
   }
 
