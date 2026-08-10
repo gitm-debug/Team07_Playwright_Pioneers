@@ -1,0 +1,4 @@
+Context set: expectedMessage = Program created successfully
+Context set: currentProgramName = Java-nn
+Context set: currentProgramData = [object Object]
+Context set: testType = positive
