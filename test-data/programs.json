@@ -1,21 +1,21 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "Javascript-a",
+      "name": "Java-yy",
       "description": "Intro to Java",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "cloud-a",
+      "name": "cloud-yy",
       "description": "Azure Cloud",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "azure-a",
+      "name": "azure-yy",
       "description": "DevOps",
       "status": "Active",
       "expectedMessage": "Program created successfully",
