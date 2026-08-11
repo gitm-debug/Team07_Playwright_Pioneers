@@ -1,5 +1,0 @@
- Edit dialog opened
- Program description updated to: "Updated mtpkbtsi"
-Context set: updatedProgramDescription = Updated mtpkbtsi
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
