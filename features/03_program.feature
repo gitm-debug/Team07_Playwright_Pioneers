@@ -87,3 +87,37 @@ Feature: Program Page Verification
   Scenario: Search by Non-Existent Program Name
     When Admin enters "NonExistentProgram123" in the search box
     Then There should be zero results
+
+#Delete multiple program
+
+Scenario: Select multiple programs
+When Admin selects more than one program by clicking on the checkbox
+Then the multiple delete button under manage program must be enabled
+
+Scenario: Delete Multiple programs
+Given Admin has selected multiple programs
+When Admin clicks on the delete button on the left top of the program page
+Then Admin lands on the Confirmation form
+
+Scenario: Delete selected program
+Given Admin is on the Confirmation form
+When Admin clicks on "Yes" button
+Then Admin can see "Successful programs deleted" message
+
+Scenario: Deleted program Visibility
+Given Admin has deleted a program
+When Admin searches for "Deleted Program names"
+Then There should be zero results
+
+Scenario: Cancel Multiple Deletion
+Given Admin is on the Confirmation form
+When Admin clicks on "No" button
+Then Admin can see Programs are still selected and not deleted
+
+Scenario: Close Multiple deletion confirmation
+Given Admin is on the Program Confirm Deletion Page after selecting a program to delete
+When Admin Click on "X" button
+Then Admin can see Confirm Deletion form disappear
+
+
+

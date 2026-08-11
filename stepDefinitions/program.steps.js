@@ -6,6 +6,7 @@ import { globalStorage } from '../services/GlobalStorage';
 import testData from '../test-data/programs.json' with { type: 'json' };
 import { ProgramPage } from '../pages/programPage.js';
 
+let firstRowBefore;
 const AUTH_FILE = 'playwright/.auth/user.json';
 
 Given('Admin is logged in to LMS Portal', async ({ Page }) => {
@@ -302,4 +303,80 @@ Given('Admin is in program page where Program status are sorted in ascending ord
 Then('Admin should see the Program status sorted in Descending order', async () => {
   const statuses = await programPage.getProgramStatuses();
   expect(programPage.isSortedDescending(statuses)).toBe(true);
+});
+
+// Delete multiple programs
+When('Admin selects more than one program by clicking on the checkbox', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0, 1]);
+});
+
+Then('the multiple delete button under manage program must be enabled', async ({ programFixture }) => {
+  const isEnabled = await programFixture.isDeleteButtonEnabled();
+  expect(isEnabled).toBe(true);
+});
+
+Given('Admin has selected multiple programs', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0, 1]);
+});
+
+When('Admin clicks on the delete button on the left top of the program page', async ({ programFixture }) => {
+  await programFixture.clickDeleteButton();
+});
+
+Then('Admin lands on the Confirmation form', async ({ programFixture }) => {
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+Given('Admin is on the Confirmation form', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+When('Admin clicks on "Yes" button', async ({ programFixture }) => {
+  await programFixture.clickYesButton();
+});
+
+Then('Admin can see "Successful programs deleted" message', async ({ programFixture }) => {
+  const message = await programFixture.getToastMessage();
+  expect(message).toContain('programs deleted');
+});
+
+Given('Admin has deleted a program', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  await programFixture.clickYesButton();
+});
+
+When('Admin searches for "Deleted Program names"', async ({ programFixture }) => {
+  await programFixture.searchProgram('deleted-program-test');
+});
+
+When('Admin clicks on "No" button', async ({ programFixture }) => {
+  await programFixture.clickNoButton();
+});
+
+Then('Admin can see Programs are still selected and not deleted', async ({ programFixture }) => {
+  const selectedCount = await programFixture.getSelectedRowCount();
+  expect(selectedCount).toBeGreaterThanOrEqual(1);
+  const tableVisible = await programFixture.isTableVisible();
+  expect(tableVisible).toBe(true);
+});
+
+Given('Admin is on the Program Confirm Deletion Page after selecting a program to delete', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+When('Admin Click on "X" button', async ({ programFixture }) => {
+  await programFixture.clickCloseButton();
+});
+
+Then('Admin can see Confirm Deletion form disappear', async ({ programFixture }) => {
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(false);
 });
