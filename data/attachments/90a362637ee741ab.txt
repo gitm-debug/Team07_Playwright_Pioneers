@@ -1,4 +1,0 @@
-Context set: expectedMessage = Program Created Successfully
-Context set: currentProgramName = Docker-f
-Context set: currentProgramData = [object Object]
-Context set: testType = positive

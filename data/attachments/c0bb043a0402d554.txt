@@ -1,0 +1,7 @@
+Context set: expectedMessage = Program Created Successfully
+Context set: currentProgramName = python-rf
+Context set: currentProgramData = [object Object]
+Context set: testType = positive
+Success message verified: "Program Created Successfully"
+Program "python-rf" created and stored!
+Current program count in storage: 3

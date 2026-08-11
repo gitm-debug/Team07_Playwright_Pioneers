@@ -1,0 +1,7 @@
+ Storage is empty, checking table...
+Re-added program from table: "Updateddxzrew"
+ Searching by name: "Updateddxzrew"
+Context set: currentSearchTerm = Updateddxzrew
+Context set: currentSearchType = name
+Verifying search results for: "name"
+Program verified by name: "Updateddxzrew"

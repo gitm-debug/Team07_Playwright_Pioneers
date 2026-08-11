@@ -1,5 +1,0 @@
-  ➜ [2026-08-11T17:25:55.073Z] [STEP] Admin is on home page after login
-  ➜ [2026-08-11T17:25:56.980Z] [STEP] Admin clicks Batch on the navigation bar
-2
-[2026-08-11T17:25:57.136Z] [INFO] Update batch data with updateWithValidData
-5

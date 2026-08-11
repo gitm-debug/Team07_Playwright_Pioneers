@@ -1,0 +1,6 @@
+ Searching by partial: "pyth"
+Context set: currentSearchTerm = pyth
+Context set: currentSearchType = partial
+Verifying search results for: "partial"
+Found 2 results for partial search: "pyth"
+Programs verified by partial name: "pyth"

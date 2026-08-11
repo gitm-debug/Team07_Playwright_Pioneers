@@ -1,6 +1,0 @@
- Searching by partial: "coba"
-Context set: currentSearchTerm = coba
-Context set: currentSearchType = partial
-Verifying search results for: "partial"
-Found 3 results for partial search: "coba"
-Programs verified by partial name: "coba"
