@@ -1,24 +1,24 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "Java-nnznaa",
+      "name": "cobal-f",
       "description": "Intro to Java",
       "status": "Active",
-      "expectedMessage": "Program created successfully",
+      "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "cloud-nnznaa",
+      "name": "Docker-f",
       "description": "Azure Cloud",
       "status": "Active",
-      "expectedMessage": "Program created successfully",
+      "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "azure-nnznaa",
+      "name": "python-f",
       "description": "DevOps",
       "status": "Active",
-      "expectedMessage": "Program created successfully",
+      "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "emptyName": {
@@ -96,6 +96,20 @@
       "description": "@#$",
       "status": "Active",
       "expectedMessage": "This field should start with an alphabet and min 2 char.",
+      "testType": "negative"
+    },
+    "lengthyDescription": {
+      "name": "Testing",
+      "description": "Testing thorouhly with edge cases will make the application to have less defects.",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet and min 2 char.",
+      "testType": "negative"
+    },
+    "lengthyName": {
+      "name": "Testing-Application-selenium-playwrightReports",
+      "description": "Testing",
+      "status": "Active",
+      "expectedMessage": "This field should start with an alphabet, no special char other than a hyphen and have min 4 char.",
       "testType": "negative"
     },
     "emptyStatus": {
