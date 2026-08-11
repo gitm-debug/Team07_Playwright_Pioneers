@@ -1,0 +1,6 @@
+Context set: expectedMessage = Program created successfully
+Context set: currentProgramName = cloud-nnznaa
+Context set: currentProgramData = [object Object]
+Context set: testType = positive
+Program "cloud-nnznaa" created and stored!
+Current program count in storage: 2

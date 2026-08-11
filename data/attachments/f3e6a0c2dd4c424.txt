@@ -1,0 +1,4 @@
+  ➜ [2026-08-11T16:27:11.989Z] [STEP] Admin is on home page after login
+  ➜ [2026-08-11T16:27:13.845Z] [STEP] Admin clicks Batch on the navigation bar
+  ➜ [2026-08-11T16:27:13.978Z] [STEP] Admin should see the following sub-menu options
+[2026-08-11T16:27:14.022Z] [INFO] Sub-menu option "Add New Batch" displayed: true

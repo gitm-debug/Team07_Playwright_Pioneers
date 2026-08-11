@@ -1,5 +1,0 @@
- Edit dialog opened
- Program description updated to: "Updated bvvf"
-Context set: updatedProgramDescription = Updated bvvf
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
