@@ -1,21 +1,21 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "Java-nn",
+      "name": "Java-nna",
       "description": "Intro to Java",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "cloud-nn",
+      "name": "cloud-nna",
       "description": "Azure Cloud",
       "status": "Active",
       "expectedMessage": "Program created successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "azure-nn",
+      "name": "azure-nna",
       "description": "DevOps",
       "status": "Active",
       "expectedMessage": "Program created successfully",
