@@ -1,0 +1,6 @@
+ Searching by partial: "Batc"
+Context set: currentSearchTerm = Batc
+Context set: currentSearchType = partial
+Verifying search results for: "partial"
+Found 4 results for partial search: "Batc"
+Programs verified by partial name: "Batc"

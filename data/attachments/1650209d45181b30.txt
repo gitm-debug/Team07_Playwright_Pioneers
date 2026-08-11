@@ -1,0 +1,4 @@
+  ➜ [2026-08-11T20:12:56.577Z] [STEP] Clicking delete button
+  ➜ [2026-08-11T20:12:57.631Z] [STEP] Checking if confirmation dialog is visible
+  ➜ [2026-08-11T20:12:57.637Z] [STEP] Clicking close (X) button on confirmation dialog
+  ➜ [2026-08-11T20:12:58.692Z] [STEP] Checking if confirmation dialog is visible
