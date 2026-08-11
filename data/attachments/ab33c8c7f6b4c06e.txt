@@ -1,5 +1,0 @@
- Edit dialog opened
- Program description updated to: "Updated wu"
-Context set: updatedProgramDescription = Updated wu
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"

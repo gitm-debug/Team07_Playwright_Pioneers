@@ -1,5 +1,0 @@
- Edit dialog opened
-Program name updated to: "Updatedxrvazm"
-Context set: updatedProgramName = Updatedxrvazm
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
