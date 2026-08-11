@@ -1,21 +1,21 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "cobal-f",
+      "name": "cobal-rf",
       "description": "Intro to Java",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "Docker-f",
+      "name": "Docker-rf",
       "description": "Azure Cloud",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "python-f",
+      "name": "python-rf",
       "description": "DevOps",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
