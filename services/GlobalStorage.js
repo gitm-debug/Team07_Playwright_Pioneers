@@ -3,7 +3,10 @@ class GlobalStorage {
   constructor() {
 
     this.programs = [];
+    this.batches = [];
+
     this.currentProgram = null;
+    this.currentBatch = null;
     // Store context data for sharing between steps within a scenario
     this.context = {};
   }
@@ -21,6 +24,25 @@ class GlobalStorage {
     this.programs.push(program);
     this.currentProgram = program;    
     return program;
+  }
+
+  addBatch(batchData) {
+    const batch = {
+      id: `batch_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      ...batchData,
+      createdAt: new Date().toISOString()
+    };
+
+    this.batches.push(batch);
+    this.currentBatch = batch;
+
+    return batch;
+  }
+
+  getLastBatch() {
+    return this.currentBatch ||
+           this.batches[this.batches.length - 1] ||
+           null;
   }
 
   getCount() {

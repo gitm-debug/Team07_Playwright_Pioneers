@@ -203,6 +203,15 @@ When('Admin enters the {string} to create new batch using {string}', async ({bat
         await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
         await batchFixture.clickSaveButton();
 
+        const createdBatch = globalStorage.addBatch({
+            programName: programName,
+            batchNameSuffix: batchData.batchNameSuffix,
+            status: batchData.status,
+            noOfClasses: batchData.noOfClasses
+        });
+
+        logger.info(`Batch created and stored: ${JSON.stringify(createdBatch)}`);
+
     } else if (data === 'leaves blank one of the mandatory fields') {
         await batchFixture.selectProgramName(programName);
         await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
@@ -490,4 +499,31 @@ Then('Admin should see the Batch Status is sorted in Descending order', async ({
   expect(statuses.length).toBeGreaterThan(0);
   expect(statuses.every(s => s.length > 0)).toBe(true);
   expect(batchFixture.isSortedDescending(statuses)).toBe(true);
+});
+
+// -----Manage batch - search bar ----------------//
+When('Admin enters the batch name in the search box', async ({batchFixture, Page}) => {
+    const batch = globalStorage.getLastBatch();
+
+    const batchNamePrefix = batch.programName;
+    const batchnameSuffix = batch.batchNameSuffix;
+    const status = batch.status;
+
+    await (batchFixture.searchBox).click();
+    await Page.waitForTimeout(200);
+    await (batchFixture.searchBox).clear();
+    await (batchFixture.searchBox).fill(batchNamePrefix);    
+    await (batchFixture.searchBox).press('Enter');
+});
+
+Then('Admin should see the filtered batch details based on the batch name in the data table', async ({batchFixture}) => {
+    const batch = globalStorage.getLastBatch();
+
+    const batchNamePrefix = batch.programName;
+    const batchnameSuffix = batch.batchNameSuffix;
+    const status = batch.status;
+
+    const actualResults = await batchFixture.verifyBatchInSerchBox(batchNamePrefix);
+    logger.info('Actual batch data: ' ,actualResults);
+    await expect(actualResults.batchName).toContain(batchNamePrefix);
 });

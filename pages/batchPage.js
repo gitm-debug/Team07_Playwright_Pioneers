@@ -60,6 +60,8 @@ export class BatchPage {
     this.yesButtonForDelete = page.getByRole('button', { name: 'Yes' });
     this.noButtonForDelete = page.getByRole('button', { name: 'No' });
     this.closeButtonForDelete = page.locator('p-confirmdialog').getByRole('button').filter({ hasText: /^$/ });
+
+    this.searchBox = page.getByRole('textbox', { name: 'Search...' });
   }
 
   async navigate() {
@@ -184,5 +186,27 @@ export class BatchPage {
   }
   async clickDialogCloseButton() {
     await this.dialogCloseButton.click();
+  }
+
+  async verifyBatchInSerchBox(batchNamePrefix) {
+    try {
+      await this.page.waitForTimeout(1000);
+      const row = this.page.locator('table tbody tr').filter({ hasText: batchNamePrefix });
+      const count = await row.count();
+
+      if (count === 0) {
+        throw new Error(`Batch "${batchNamePrefix}" not found in search results`);
+      }
+
+      const cells = row.first().locator('td');
+      const batchName = await cells.nth(1).textContent();
+      const batchdescription = await cells.nth(2).textContent();
+      const batchstatus = await cells.nth(3).textContent();
+      const noOfClasses = await cells.nth(4).textContent();
+      const programName = await cells.nth(5).textContent();
+      return { batchName, batchdescription, batchstatus, noOfClasses, programName };
+    } catch (error) {
+      throw new Error(`Program not found: ${error.message}`);     
+    }
   }
 }
