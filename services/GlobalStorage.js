@@ -45,6 +45,10 @@ class GlobalStorage {
            null;
   }
 
+  getPreviousBatch() {
+    return this.batches[this.batches.length - 2] || null;
+  }
+
   getCount() {
     return this.programs.length;
   }  
