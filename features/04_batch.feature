@@ -74,6 +74,7 @@ Scenario Outline: Add new batch only with "<data>"
   Then Admin should get a "<popup>" on batch page for "<data>"
   Examples: 
   | data                                                | popup                             | testDataKey |
+  | data to all fields and click save                   | successful message                |   validAllData       |
   | data to mandatory fields and click save             | successful message                |   validMandatoryData |
   | leaves blank one of the mandatory fields            | error message on respective field |   blankMandatoryField |
   | valid data to all mandatory fields and click cancel | batch details popup closes without creating batch | validMandatoryData |
@@ -187,10 +188,14 @@ Scenario: Sorting of Batch status in Descending order
 
 #--------------Manage batch - search bar --------------------#
 @searchBatch
-Scenario: Search by batch name
-  When Admin enters the batch name in the search box
-  Then Admin should see the filtered batch details based on the batch name in the data table
-  
+Scenario Outline: Search by batch name
+  When Admin search batch in the search box by "<searchType>"
+  Then Admin should see the filtered batch details based on the "<searchType>" in the data table
+   Examples:
+      | searchType |
+      | batchName |
+      | batchDescription |
+      
 # ---------- Batch page - Pagination ---------------------- #
 @batchPagination
 Scenario: Next Page Navigation

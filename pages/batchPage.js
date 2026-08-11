@@ -192,25 +192,25 @@ export class BatchPage {
     await this.dialogCloseButton.click();
   }
 
-  async verifyBatchInSerchBox(batchNamePrefix) {
+  async verifyBatchInSerchBox(batchDetail) {
     try {
       await this.page.waitForTimeout(1000);
-      const row = this.page.locator('table tbody tr').filter({ hasText: batchNamePrefix });
+      const row = this.page.locator('table tbody tr').filter({ hasText: batchDetail });
       const count = await row.count();
 
       if (count === 0) {
-        throw new Error(`Batch "${batchNamePrefix}" not found in search results`);
+        throw new Error(`Batch "${batchDetail}" not found in search results`);
       }
 
       const cells = row.first().locator('td');
       const batchName = await cells.nth(1).textContent();
-      const batchdescription = await cells.nth(2).textContent();
+      const batchDescription = await cells.nth(2).textContent();
       const batchstatus = await cells.nth(3).textContent();
       const noOfClasses = await cells.nth(4).textContent();
       const programName = await cells.nth(5).textContent();
-      return { batchName, batchdescription, batchstatus, noOfClasses, programName };
+      return { batchName, batchDescription, batchstatus, noOfClasses, programName };
     } catch (error) {
-      throw new Error(`Program not found: ${error.message}`);     
+      throw new Error(`batchDetail not found: ${error.message}`);     
     }
   }
    

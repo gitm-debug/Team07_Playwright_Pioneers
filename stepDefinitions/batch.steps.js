@@ -193,7 +193,30 @@ When('Admin enters the {string} to create new batch using {string}', async ({bat
     const programName = program.name;
     const batchData = testData.batches[testDataKey];
 
-    if (data === 'data to mandatory fields and click save') {       
+    if (data === 'data to all fields and click save' ) {
+        await batchFixture.selectProgramName(programName);
+        await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
+        await batchFixture.descriptionTextBox.fill(batchData.batchDescription);
+        if(batchData.status === 'active')
+            await batchFixture.activeRadioButton.click();
+        else 
+            await batchFixture.inactiveRadioButton.click();
+        await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
+        await batchFixture.clickSaveButton();
+
+        const createdBatch = globalStorage.addBatch({
+            programName: programName,
+            batchDescription: batchData.batchDescription,
+            batchNameSuffix: batchData.batchNameSuffix,
+            status: batchData.status,
+            noOfClasses: batchData.noOfClasses
+        });
+
+        logger.info(`Batch created with all data and stored: ${JSON.stringify(createdBatch)}`);
+        console.log(`Batch created with all data and stored: ${JSON.stringify(createdBatch)}`);
+    }
+
+    else if (data === 'data to mandatory fields and click save') {       
         await batchFixture.selectProgramName(programName);
         await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
         if(batchData.status === 'active')
@@ -210,7 +233,8 @@ When('Admin enters the {string} to create new batch using {string}', async ({bat
             noOfClasses: batchData.noOfClasses
         });
 
-        logger.info(`Batch created and stored: ${JSON.stringify(createdBatch)}`);
+        logger.info(`Batch created with mandatory data and stored: ${JSON.stringify(createdBatch)}`);
+        console.log(`Batch created with mandatory data and stored: ${JSON.stringify(createdBatch)}`);
 
     } else if (data === 'leaves blank one of the mandatory fields') {
         await batchFixture.selectProgramName(programName);
@@ -494,31 +518,63 @@ Then('Admin should see the Batch Status is sorted in Descending order', async ({
 });
 
 // -----Manage batch - search bar ----------------//
-When('Admin enters the batch name in the search box', async ({batchFixture, Page}) => {
-    const batch = globalStorage.getLastBatch();
+When('Admin search batch in the search box by {string}', async ({batchFixture, Page}, searchType) => {
+    await Page.pause();
+    if(searchType === 'batchName') {
+        const batch = globalStorage.getLastBatch();
 
-    const batchNamePrefix = batch.programName;
-    const batchnameSuffix = batch.batchNameSuffix;
-    const status = batch.status;
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const status = batch.status;
 
-    await (batchFixture.searchBox).click();
-    await Page.waitForTimeout(200);
-    await (batchFixture.searchBox).clear();
-    await (batchFixture.searchBox).fill(batchNamePrefix);    
-    await (batchFixture.searchBox).press('Enter');
+        await (batchFixture.searchBox).click();
+        await Page.waitForTimeout(200);
+        await (batchFixture.searchBox).clear();
+        await (batchFixture.searchBox).fill(batchNamePrefix);    
+        await (batchFixture.searchBox).press('Enter');
+    }
+    else if (searchType === 'batchDescription') {
+        const batch = globalStorage.getPreviousBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const batchDescription = batch.batchDescription;
+        const status = batch.status;
+
+        await (batchFixture.searchBox).click();
+        await Page.waitForTimeout(200);
+        await (batchFixture.searchBox).clear();
+        await (batchFixture.searchBox).fill(batchDescription);    
+        await (batchFixture.searchBox).press('Enter');
+    }
 });
 
-Then('Admin should see the filtered batch details based on the batch name in the data table', async ({batchFixture}) => {
-    const batch = globalStorage.getLastBatch();
+Then('Admin should see the filtered batch details based on the {string} in the data table', async ({batchFixture}, searchType) => {
+    if(searchType === 'batchName') {
+        const batch = globalStorage.getLastBatch();
 
-    const batchNamePrefix = batch.programName;
-    const batchnameSuffix = batch.batchNameSuffix;
-    const status = batch.status;
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const status = batch.status;
 
-    const actualResults = await batchFixture.verifyBatchInSerchBox(batchNamePrefix);
-    //logger.info('Actual batch data: ' ,actualResults);
-    logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
-    await expect(actualResults.batchName).toContain(batchNamePrefix);
+        const actualResults = await batchFixture.verifyBatchInSerchBox(batchNamePrefix);
+        //logger.info('Actual batch data: ' ,actualResults);
+        logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
+        await expect(actualResults.batchName).toContain(batchNamePrefix);
+    }
+    else if(searchType === 'batchDescription') {
+        const batch = globalStorage.getPreviousBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const batchDescription = batch.batchDescription;
+        const status = batch.status;
+
+        const actualResults = await batchFixture.verifyBatchInSerchBox(batchDescription);
+        //logger.info('Actual batch data: ' ,actualResults);
+        logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
+        await expect(actualResults.batchDescription).toContain(batchDescription);
+    }
 });
 
 // Batch Pagination
