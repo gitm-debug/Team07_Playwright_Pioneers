@@ -1,5 +1,0 @@
- Edit dialog opened
-Program name updated to: "Updatedseviqc"
-Context set: updatedProgramName = Updatedseviqc
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
