@@ -212,7 +212,8 @@ export class BatchPage {
     } catch (error) {
       throw new Error(`Program not found: ${error.message}`);     
     }
-    
+  }
+   
   async clickNextPage() {
     await this.nextPageButton.click();
     await this.page.waitForTimeout(500);
