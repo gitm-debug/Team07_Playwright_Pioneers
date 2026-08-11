@@ -52,6 +52,7 @@ export default defineConfig({
       name: 'chromium-noauth',
       use: {
         ...devices['Desktop Chrome'],
+        storageState: undefined,
       },
       grep: /@noauth/,
       },

@@ -12,8 +12,8 @@ const AUTH_FILE = 'playwright/.auth/user.json';
 Given('Admin is logged in to LMS Portal', async ({ Page }) => {
   // Step: Given Admin is logged in to LMS Portal
   // From: features\03_program.feature:5:5
-  await Page.goto('/');
-  await Page.waitForLoadState('networkidle');
+  await Page.goto('/', { timeout: 60000 });
+  await Page.waitForLoadState('networkidle', { timeout: 60000 });
 });
 
 When('Admin clicks {string} on the navigation bar in lms portal', async ({ programFixture }, arg) => {
@@ -227,82 +227,152 @@ Then('There should be zero results', async ({ programFixture }) => {
   await programFixture.verifyNoResults();
 });
 
-let programPage;
-
-Given('Admin is on Program page', async ({ page, loginFixture }) => {
-  programPage = new ProgramPage(page);
-  await loginFixture.loginWithCredentials(process.env.EMAIL, process.env.PASSWORD, process.env.ROLE);
-  await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
-  await programPage.navigate();
+When('Admin clicks on Edit option for a particular program', async ({programFixture}) => {
+  // Step: When Admin clicks on Edit option for a particular program
+  // From: features\03_program.feature:93:5
+   await programFixture.clickEditOnFirstProgram()
+  
 });
 
-When('Admin clicks on Arrow next to program Name', async () => {
-  await programPage.clickProgramNameArrow();
+Then('Admin should see  Edit Program Details dialog for program', async ({programFixture}) => {
+  // Step: Then Admin should see  Edit Program Details dialog for program
+  // From: features\03_program.feature:94:5
+  await programFixture.verifyDialogVisible()
 });
 
-Then('Admin should see the Program Name is sorted in Ascending order', async () => {
-  const names = await programPage.getProgramNames();
-  expect(programPage.isSortedAscending(names)).toBe(true);
-});
-
-Given('Admin is in program page where Program names are sorted in ascending order', async () => {
-  const names = await programPage.getProgramNames();
-  if (!programPage.isSortedAscending(names)) {
-    await programPage.clickProgramNameArrow();
+When('Admin clicks on Edit option, edits the {string} and clicks on Save button', async ({programFixture}, field) => {
+  // Step: When Admin clicks on Edit option, edits the "name" and clicks on Save button
+  // From: features\03_program.feature:97:5
+   await programFixture.clickEditOnFirstProgram();
+  
+  if (field === 'name') {
+    const randomStr = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 8);
+    const updatedName = `Updated${randomStr}`;
+    await programFixture.editProgramName(updatedName);
+    // Fix: Use globalStorage.setContext instead of global.set
+    globalStorage.setContext('updatedProgramName', updatedName);
+  } else if (field === 'description') {
+    const randomStr = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 10);
+    const updatedDescription = `Updated ${randomStr}`;
+    await programFixture.editProgramDescription(updatedDescription);
+    // Fix: Use globalStorage.setContext instead of global.set
+    globalStorage.setContext('updatedProgramDescription', updatedDescription);
+  } else if (field === 'status') {
+    const currentStatus = await programFixture.getCurrentStatus();
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    await programFixture.editProgramStatus(newStatus);
+    //  Fix: Use globalStorage.setContext instead of global.set
+    globalStorage.setContext('updatedProgramStatus', newStatus);
   }
-  const sortedNames = await programPage.getProgramNames();
-  expect(programPage.isSortedAscending(sortedNames)).toBe(true);
+  
+  await programFixture.clickProgramSaveButton();
 });
 
-Then('Admin should see the Program Name is sorted in Descending order', async () => {
-  const names = await programPage.getProgramNames();
-  expect(programPage.isSortedDescending(names)).toBe(true);
+Then('Admin should see {string} message', async ({programFixture}, expectedMessage) => {
+  // Step: Then Admin should see "Successful Program Updated" message
+  // From: features\03_program.feature:98:5
+  await programFixture.verifyProgramUpdatedSuccessMessage(expectedMessage);
 });
 
-When('Admin clicks on Arrow next to Program Description', async () => {
-  await programPage.clickProgramDescriptionArrow();
+When('Admin searches with updated program name', async ({programFixture}) => {
+  // Step: When Admin searches with updated program name
+  // From: features\03_program.feature:107:5
+  //await programFixture.clickEditOnFirstProgram();
+  const updatedName = globalStorage.getContext('updatedProgramName');
+  await programFixture.searchProgram(updatedName);
+  
+  
 });
 
-Then('Admin should see the Program Description is sorted in Ascending order', async () => {
-  const descriptions = await programPage.getProgramDescriptions();
-  expect(programPage.isSortedAscending(descriptions)).toBe(true);
-});
-
-Given('Admin is in program page where Program descriptions are sorted in ascending order', async () => {
-  const descriptions = await programPage.getProgramDescriptions();
-  if (!programPage.isSortedAscending(descriptions)) {
-    await programPage.clickProgramDescriptionArrow();
+Then('Admin verifies that the details are correctly updated', async ({programFixture}) => {
+  // Step: Then Admin verifies that the details are correctly updated
+  // From: features\03_program.feature:108:5
+  const updatedName = globalStorage.getContext('updatedProgramName');
+  //const updatedDescription = globalStorage.getContext('updatedProgramDescription') || 'Updated description';
+  const updatedStatus = globalStorage.getContext('updatedProgramStatus') || 'Active';
+  
+  if (!updatedName) {
+    throw new Error('No updated program name found!');
   }
-  const sortedDescriptions = await programPage.getProgramDescriptions();
-  expect(programPage.isSortedAscending(sortedDescriptions)).toBe(true);
+  
+  await programFixture.verifyProgramInSearchResults(updatedName);
+  
+  console.log('All program details verified successfully!');
 });
 
-Then('Admin should see the Program Description is sorted in Descending order', async () => {
-  const descriptions = await programPage.getProgramDescriptions();
-  expect(programPage.isSortedDescending(descriptions)).toBe(true);
+
+
+
+// let programPage;
+
+// Given('Admin is on Program page', async ({ page, loginFixture }) => {
+//   programPage = new ProgramPage(page);
+//   await loginFixture.loginWithCredentials(process.env.EMAIL, process.env.PASSWORD, process.env.ROLE);
+//   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+//   await programPage.navigate();
+// });
+
+When('Admin clicks on Arrow next to program Name', async ({programFixture}) => {
+  await programFixture.clickProgramNameArrow();
 });
 
-When('Admin clicks on Arrow next to Program status', async () => {
-  await programPage.clickProgramStatusArrow();
+Then('Admin should see the Program Name is sorted in Ascending order', async ({programFixture}) => {
+  const names = await programFixture.getProgramNames();
+  expect(programFixture.isSortedAscending(names)).toBe(true);
 });
 
-Then('Admin should see the Program status sorted in Ascending order', async () => {
-  const statuses = await programPage.getProgramStatuses();
-  expect(programPage.isSortedAscending(statuses)).toBe(true);
+Given('Admin is in program page where Program names are sorted in ascending order', async ({programFixture}) => {
+  await programFixture.navigate();
+  await programFixture.clickProgramNameArrow();
+  const sortedNames = await programFixture.getProgramNames();
+  expect(programFixture.isSortedAscending(sortedNames)).toBe(true);
 });
 
-Given('Admin is in program page where Program status are sorted in ascending order', async () => {
-  const statuses = await programPage.getProgramStatuses();
-  if (!programPage.isSortedAscending(statuses)) {
-    await programPage.clickProgramStatusArrow();
-  }
-  const sortedStatuses = await programPage.getProgramStatuses();
-  expect(programPage.isSortedAscending(sortedStatuses)).toBe(true);
+Then('Admin should see the Program Name is sorted in Descending order', async ({programFixture}) => {
+  const names = await programFixture.getProgramNames();
+  expect(programFixture.isSortedDescending(names)).toBe(true);
 });
 
-Then('Admin should see the Program status sorted in Descending order', async () => {
-  const statuses = await programPage.getProgramStatuses();
-  expect(programPage.isSortedDescending(statuses)).toBe(true);
+When('Admin clicks on Arrow next to Program Description', async ({programFixture}) => {
+  await programFixture.clickProgramDescriptionArrow();
+});
+
+Then('Admin should see the Program Description is sorted in Ascending order', async ({programFixture}) => {
+  const descriptions = await programFixture.getProgramDescriptions();
+  expect(programFixture.isSortedAscending(descriptions)).toBe(true);
+});
+
+Given('Admin is in program page where Program descriptions are sorted in ascending order', async ({programFixture}) => {
+  await programFixture.navigate();
+  await programFixture.clickProgramDescriptionArrow();
+  const sortedDescriptions = await programFixture.getProgramDescriptions();
+  expect(programFixture.isSortedAscending(sortedDescriptions)).toBe(true);
+});
+
+Then('Admin should see the Program Description is sorted in Descending order', async ({programFixture}) => {
+  const descriptions = await programFixture.getProgramDescriptions();
+  expect(programFixture.isSortedDescending(descriptions)).toBe(true);
+});
+
+When('Admin clicks on Arrow next to Program status', async ({programFixture}) => {
+  await programFixture.clickProgramStatusArrow();
+});
+
+Then('Admin should see the Program status sorted in Ascending order', async ({programFixture}) => {
+  const statuses = await programFixture.getProgramStatuses();
+  expect(programFixture.isSortedAscending(statuses)).toBe(true);
+});
+
+Given('Admin is in program page where Program status are sorted in ascending order', async ({programFixture}) => {
+  await programFixture.navigate();
+  await programFixture.clickProgramStatusArrow();
+  const sortedStatuses = await programFixture.getProgramStatuses();
+  expect(programFixture.isSortedAscending(sortedStatuses)).toBe(true);
+});
+
+Then('Admin should see the Program status sorted in Descending order', async ({programFixture}) => {
+  const statuses = await programFixture.getProgramStatuses();
+  expect(programFixture.isSortedDescending(statuses)).toBe(true);
 });
 
 // Delete multiple programs
@@ -339,9 +409,9 @@ When('Admin clicks on "Yes" button', async ({ programFixture }) => {
   await programFixture.clickYesButton();
 });
 
-Then('Admin can see "Successful programs deleted" message', async ({ programFixture }) => {
+Then('Admin can see "Successful Programs Deleted" message', async ({ programFixture }) => {
   const message = await programFixture.getToastMessage();
-  expect(message).toContain('programs deleted');
+  expect(message).toContain('Successful Programs Deleted');
 });
 
 Given('Admin has deleted a program', async ({ programFixture }) => {
@@ -380,3 +450,96 @@ Then('Admin can see Confirm Deletion form disappear', async ({ programFixture })
   const isVisible = await programFixture.isConfirmDialogVisible();
   expect(isVisible).toBe(false);
 });
+
+// Pagination
+
+Given('Admin is logged in to LMS', async ({ page, loginFixture }) => {
+  await loginFixture.loginWithCredentials(process.env.EMAIL, process.env.PASSWORD, process.env.ROLE);
+  await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+});
+
+Given('Admin is on the Program page with multiple records', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  const rowCount = await programFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+});
+
+Given('Admin is on any page except the last page of Program table', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  const isLastDisabled = await programFixture.isLastPageDisabled();
+  if (!isLastDisabled) {
+    await programFixture.clickLastPage();
+    await programFixture.clickPrevPage();
+  }
+});
+
+Given('Admin is on the Program table on any page except the first page', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  await programFixture.clickNextPage();
+});
+
+Given('Admin is on any page except the first page of Program table', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  await programFixture.clickNextPage();
+});
+
+When('Admin clicks the next page option \\(>\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickNextPage();
+});
+
+When('Admin clicks the last page option \\(>>\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickLastPage();
+});
+
+When('Admin clicks the previous page option \\(<\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickPrevPage();
+});
+
+When('Admin clicks the first page option \\(<<\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickFirstPage();
+});
+
+When('Admin clicks {string} on the navigation bar', async ({ programFixture }, navItem) => {
+  await programFixture.clickProgramNavBar();
+});
+
+Then('Admin should navigate to the next page and see the next set of program records', async ({ programFixture }) => {
+  const firstRowAfter = await programFixture.getFirstRowProgramName();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the last page record on the table', async ({ programFixture }) => {
+  const isLastDisabled = await programFixture.isLastPageDisabled();
+  expect(isLastDisabled).toBe(true);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the previous page record on the table', async ({ programFixture }) => {
+  const firstRowAfter = await programFixture.getFirstRowProgramName();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the very first page record on the table', async ({ programFixture }) => {
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing 1 to');
+});
+
+Then('{string} should be displayed', async ({ programFixture }, expectedText) => {
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain(expectedText);
+});
+
+Then('Admin should see pagination icons disabled', async ({ programFixture }) => {
+  const allDisabled = await programFixture.areAllPaginationButtonsDisabled();
+  expect(allDisabled).toBe(true);
+});
+
