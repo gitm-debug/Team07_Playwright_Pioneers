@@ -1,5 +1,0 @@
- Edit dialog opened
- Program description updated to: "Updated pcbaic"
-Context set: updatedProgramDescription = Updated pcbaic
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"

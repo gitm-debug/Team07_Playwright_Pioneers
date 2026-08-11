@@ -1,3 +1,0 @@
-  ➜ [2026-08-11T13:03:59.645Z] [STEP] Clicking delete button
-  ➜ [2026-08-11T13:04:00.732Z] [STEP] Clicking Yes button on confirmation dialog
- No results found as expected
