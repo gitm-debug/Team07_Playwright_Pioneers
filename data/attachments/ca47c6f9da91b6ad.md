@@ -1,0 +1,279 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: features/04_batch.feature.spec.js >> Batch Page UI >> Select multiple batch on batch page
+- Location: .features-gen/features/04_batch.feature.spec.js:129:3
+
+# Error details
+
+```
+Error: Not enough rows. Found 0, but need 3.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: LMS - Learning Management System
+    - generic [ref=e6]:
+      - button "Home" [ref=e7] [cursor=pointer]
+      - button "Program" [ref=e8] [cursor=pointer]
+      - button "Batch" [ref=e9] [cursor=pointer]
+      - button "Logout" [ref=e10] [cursor=pointer]
+  - generic [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]: Manage Batch
+      - generic [ref=e16]:
+        - button [disabled] [ref=e18]:
+          - generic [ref=e19]: 
+        - generic [ref=e21]:
+          - generic [ref=e22]: 
+          - textbox "Search..." [ref=e23]
+    - generic [ref=e26]:
+      - grid [ref=e28]:
+        - rowgroup [ref=e29]:
+          - row [ref=e30]:
+            - columnheader [ref=e31]:
+              - generic [ref=e33] [cursor=pointer]:
+                - generic [ref=e34]:
+                  - checkbox [disabled]
+                - checkbox
+            - columnheader "Batch Name " [ref=e35] [cursor=pointer]:
+              - text: Batch Name
+              - generic [ref=e36]: 
+            - columnheader "Batch Description " [ref=e38] [cursor=pointer]:
+              - text: Batch Description
+              - generic [ref=e39]: 
+            - columnheader "Batch Status " [ref=e41] [cursor=pointer]:
+              - text: Batch Status
+              - generic [ref=e42]: 
+            - columnheader "No Of Classes " [ref=e44] [cursor=pointer]:
+              - text: No Of Classes
+              - generic [ref=e45]: 
+            - columnheader "Program Name " [ref=e47] [cursor=pointer]:
+              - text: Program Name
+              - generic [ref=e48]: 
+            - columnheader "Edit / Delete" [ref=e50]
+        - rowgroup
+      - generic [ref=e52]:
+        - generic [ref=e53] [cursor=pointer]: Showing 0 to 0 of 0 entries
+        - button "" [disabled]
+        - button "" [disabled]
+        - button "1" [ref=e55] [cursor=pointer]
+        - button "" [disabled]
+        - button "" [disabled]
+      - generic [ref=e56]: In total there are 0 batches.
+```
+
+# Test source
+
+```ts
+  256 |                 await expect(batchFixture.batchNameBox).toBeDisabled();
+  257 |                 break;
+  258 |             default:
+  259 |                 throw new Error(`Unknown detail ${detail}`);
+  260 |         }
+  261 |     }
+  262 | });
+  263 | 
+  264 | When('Admin updates any fields with {string} on batch details dialog box using {string}', async ({batchFixture}, details, testDataKey) => {
+  265 |     const batchData = testData.batches[testDataKey];
+  266 |     logger.info(`Update batch data with ${testDataKey}`);
+  267 | 
+  268 |     if(details === 'invalid data and click save button') {
+  269 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  270 |         console.log(randomNumber);
+  271 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  272 |         await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
+  273 |         await batchFixture.clickSaveButton();
+  274 |     }
+  275 |     else if(details === 'valid data and click save button') {
+  276 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  277 |         console.log(randomNumber);
+  278 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  279 |         await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
+  280 |         await (batchFixture.noOfClassesInputBox).fill(batchData.noOfClasses);
+  281 |         await batchFixture.clickSaveButton();
+  282 |     }
+  283 |     else if(details === 'valid data and click cancel button') {
+  284 |         const randomNumber = Math.floor(Math.random() * 5) + 1;
+  285 |         console.log(randomNumber);
+  286 |         batchFixture.getEditButtonForRow(randomNumber).click();
+  287 |         await (batchFixture.descriptionTextBox).fill(batchData.batchDescription);
+  288 |         await (batchFixture.noOfClassesInputBox).fill(batchData.noOfClasses);
+  289 |         await batchFixture.clickCancelButton();
+  290 |     }
+  291 | });
+  292 | 
+  293 | Then('Admin should get {string} on batch page', async ({batchFixture}, popup) => {
+  294 |     if(popup === 'Error msg under respective field') {
+  295 |         await expect(batchFixture.failPopup).toBeVisible();
+  296 |     }
+  297 |     else if(popup === 'Successful msg for editing batch') {
+  298 |         await expect(batchFixture.successPopup).toBeVisible();
+  299 |     }
+  300 |     else if(popup === 'batch details popup closes without editing batch') {
+  301 |         await expect(batchFixture.batchDetailsDialog).not.toBeVisible();
+  302 |     }
+  303 | });
+  304 | 
+  305 | When('Admin clicks on delete icon on any row of the batch table', async ({batchFixture}) => {
+  306 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  307 |     console.log(randomNumber);
+  308 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  309 | });
+  310 | 
+  311 | Then('Admin should see the confirm alert box with yes and no button on batch page', async ({batchFixture}) => {
+  312 |     await expect(batchFixture.confirmAlertBoxForDelete).toBeVisible();
+  313 |     await expect(batchFixture.yesButtonForDelete).toBeVisible();
+  314 |     await expect(batchFixture.noButtonForDelete).toBeVisible();
+  315 | });
+  316 | 
+  317 | When('Admin clicks yes button after clicking delete icon', async ({batchFixture}) => {
+  318 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  319 |     console.log(randomNumber);
+  320 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  321 |     await (batchFixture.yesButtonForDelete).click();
+  322 | });
+  323 | 
+  324 | Then('Admin should see the successful message and the batch should be deleted', async ({batchFixture}) => {
+  325 |     await expect(batchFixture.successPopup).toBeVisible();
+  326 | });
+  327 | 
+  328 | When('Admin clicks  no button after clicking delete icon', async ({batchFixture}) => {
+  329 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  330 |     console.log(randomNumber);
+  331 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  332 |     await (batchFixture.noButtonForDelete).click();
+  333 | });
+  334 | 
+  335 | Then('Admin should see the alert box closed and the batch is not deleted', async ({batchFixture}) => {
+  336 |     await expect(batchFixture.confirmAlertBoxForDelete).not.toBeVisible();
+  337 | });
+  338 | 
+  339 | When('Admin clicks on the close icon on confirm alert box', async ({batchFixture}) => {
+  340 |     const randomNumber = Math.floor(Math.random() * 5) + 1;
+  341 |     console.log(randomNumber);
+  342 |     batchFixture.getDeleteButtonForRow(randomNumber).click();
+  343 |     await (batchFixture.closeButtonForDelete).click();
+  344 | });
+  345 | 
+  346 | Then('Admin should see the alert box closed and see batch page', async ({batchFixture}) => {
+  347 |     await expect(batchFixture.confirmAlertBoxForDelete).not.toBeVisible();
+  348 | });
+  349 | 
+  350 | When('Admin selects more than one batch by clicking on the checkbox', async ({Page,batchFixture}) => {
+  351 |     //await Page.pause();
+  352 |     const noOfCheckboxes = 3;
+  353 |     const totalRows = await batchFixture.batchTableRows.count();
+  354 | 
+  355 |     if (totalRows < noOfCheckboxes) {
+> 356 |         throw new Error(`Not enough rows. Found ${totalRows}, but need ${noOfCheckboxes}.`);
+      |               ^ Error: Not enough rows. Found 0, but need 3.
+  357 |     }
+  358 |     const selectedRows = new Set();
+  359 |     
+  360 | 
+  361 |     while(selectedRows.size < noOfCheckboxes) {
+  362 |         const randomIndex = Math.floor(Math.random() * totalRows);
+  363 |         selectedRows.add(randomIndex);
+  364 |     }
+  365 | 
+  366 |     for(const rowIndex of selectedRows) {
+  367 |         logger.info(`Selecting rows: ${rowIndex}`);
+  368 |         await batchFixture.getCheckboxForRow(rowIndex).click();
+  369 |     }
+  370 | });
+  371 | 
+  372 | Then('Admin should see the Multiple delete box enabled under manage batch', async ({batchFixture}) => {
+  373 |     await expect(batchFixture.deleteIcon).toBeEnabled();
+  374 | });
+  375 | 
+  376 | When('Admin clicks on the delete button on the left top of the batch page', async ({batchFixture}) => {
+  377 |     await (batchFixture.deleteIcon).click();
+  378 | });
+  379 | 
+  380 | Then('Admin lands on Confirmation box with yes or no to delete batch', async ({batchFixture}) => {
+  381 |     await expect(batchFixture.confirmAlertBoxForDelete).toBeVisible();
+  382 |     await expect(batchFixture.yesButtonForDelete).toBeVisible();
+  383 |     await expect(batchFixture.noButtonForDelete).toBeVisible();
+  384 |     await expect(batchFixture.closeButtonForDelete).toBeVisible();    
+  385 | });
+  386 | 
+  387 | // Batch Name sorting
+  388 | When('Admin clicks on Arrow next to batch name', async ({batchFixture}) => {
+  389 |   await batchFixture.clickBatchNameArrow();
+  390 | });
+  391 | 
+  392 | Then('Admin should see the Batch Name is sorted in Ascending order', async ({batchFixture}) => {
+  393 |   const names = await batchFixture.getBatchNames();
+  394 |   expect(names.length).toBeGreaterThan(0);
+  395 |   expect(names.every(n => n.length > 0)).toBe(true);
+  396 |   expect(batchFixture.isSortedAscending(names)).toBe(true);
+  397 | });
+  398 | 
+  399 | Given('Admin is in batch page where Batch names are sorted in ascending order', async ({batchFixture}) => {
+  400 |   await batchFixture.navigate();
+  401 |   await batchFixture.clickBatchNameArrow();
+  402 |   const sortedNames = await batchFixture.getBatchNames();
+  403 |   expect(batchFixture.isSortedAscending(sortedNames)).toBe(true);
+  404 | });
+  405 | 
+  406 | Then('Admin should see the Batch Name is sorted in Descending order', async ({batchFixture}) => {
+  407 |   const names = await batchFixture.getBatchNames();
+  408 |   expect(names.length).toBeGreaterThan(0);
+  409 |   expect(names.every(n => n.length > 0)).toBe(true);
+  410 |   expect(batchFixture.isSortedDescending(names)).toBe(true);
+  411 | });
+  412 | 
+  413 | // Batch Description sorting
+  414 | When('Admin clicks on Arrow next to batch description', async ({batchFixture}) => {
+  415 |   await batchFixture.clickBatchDescriptionArrow();
+  416 | });
+  417 | 
+  418 | Then('Admin should see the Batch Description is sorted in Ascending order', async ({batchFixture}) => {
+  419 |   const descriptions = await batchFixture.getBatchDescriptions();
+  420 |   expect(descriptions.length).toBeGreaterThan(0);
+  421 |   expect(batchFixture.isSortedAscending(descriptions)).toBe(true);
+  422 | });
+  423 | 
+  424 | Given('Admin is in batch page where Batch descriptions are sorted in ascending order', async ({batchFixture}) => {
+  425 |   await batchFixture.navigate();
+  426 |   await batchFixture.clickBatchDescriptionArrow();
+  427 |   const sortedDescriptions = await batchFixture.getBatchDescriptions();
+  428 |   expect(batchFixture.isSortedAscending(sortedDescriptions)).toBe(true);
+  429 | });
+  430 | 
+  431 | Then('Admin should see the Batch Description is sorted in Descending order', async ({batchFixture}) => {
+  432 |   const descriptions = await batchFixture.getBatchDescriptions();
+  433 |   expect(descriptions.length).toBeGreaterThan(0);
+  434 |   expect(batchFixture.isSortedDescending(descriptions)).toBe(true);
+  435 | });
+  436 | 
+  437 | // Number of Classes sorting
+  438 | When('Admin clicks on Arrow next to number of classes', async ({batchFixture}) => {
+  439 |   await batchFixture.clickNoOfClassesArrow();
+  440 | });
+  441 | 
+  442 | Then('Admin should see the Number of Classes is sorted in Ascending order', async ({batchFixture}) => {
+  443 |   const classes = await batchFixture.getNoOfClasses();
+  444 |   expect(classes.length).toBeGreaterThan(0);
+  445 |   expect(batchFixture.isSortedAscendingNumeric(classes)).toBe(true);
+  446 | });
+  447 | 
+  448 | Given('Admin is in batch page where Number of classes are sorted in ascending order', async ({batchFixture}) => {
+  449 |   await batchFixture.navigate();
+  450 |   await batchFixture.clickNoOfClassesArrow();
+  451 |   const sortedClasses = await batchFixture.getNoOfClasses();
+  452 |   expect(batchFixture.isSortedAscendingNumeric(sortedClasses)).toBe(true);
+  453 | });
+  454 | 
+  455 | Then('Admin should see the Number of Classes is sorted in Descending order', async ({batchFixture}) => {
+  456 |   const classes = await batchFixture.getNoOfClasses();
+```
