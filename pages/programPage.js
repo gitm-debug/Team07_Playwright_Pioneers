@@ -500,11 +500,15 @@ export class ProgramPage {
   }
 
   async clickProgramDescriptionArrow() {
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300);
     await this.programDescriptionHeader.click();
   }
 
   async clickProgramStatusArrow() {
-    await this.page.click(this.programStatusHeader);
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300);
+    await this.programStatusHeader.click();
   }
 
   async getProgramNames() {
