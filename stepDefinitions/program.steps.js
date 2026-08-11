@@ -6,13 +6,14 @@ import { globalStorage } from '../services/GlobalStorage';
 import testData from '../test-data/programs.json' with { type: 'json' };
 import { ProgramPage } from '../pages/programPage.js';
 
+let firstRowBefore;
 const AUTH_FILE = 'playwright/.auth/user.json';
 
 Given('Admin is logged in to LMS Portal', async ({ Page }) => {
   // Step: Given Admin is logged in to LMS Portal
   // From: features\03_program.feature:5:5
-  await Page.goto('/');
-  await Page.waitForLoadState('networkidle');
+  await Page.goto('/', { timeout: 60000 });
+  await Page.waitForLoadState('networkidle', { timeout: 60000 });
 });
 
 When('Admin clicks {string} on the navigation bar in lms portal', async ({ programFixture }, arg) => {
@@ -373,3 +374,172 @@ Then('Admin should see the Program status sorted in Descending order', async ({p
   const statuses = await programFixture.getProgramStatuses();
   expect(programFixture.isSortedDescending(statuses)).toBe(true);
 });
+
+// Delete multiple programs
+When('Admin selects more than one program by clicking on the checkbox', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0, 1]);
+});
+
+Then('the multiple delete button under manage program must be enabled', async ({ programFixture }) => {
+  const isEnabled = await programFixture.isDeleteButtonEnabled();
+  expect(isEnabled).toBe(true);
+});
+
+Given('Admin has selected multiple programs', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0, 1]);
+});
+
+When('Admin clicks on the delete button on the left top of the program page', async ({ programFixture }) => {
+  await programFixture.clickDeleteButton();
+});
+
+Then('Admin lands on the Confirmation form', async ({ programFixture }) => {
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+Given('Admin is on the Confirmation form', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+When('Admin clicks on "Yes" button', async ({ programFixture }) => {
+  await programFixture.clickYesButton();
+});
+
+Then('Admin can see "Successful Programs Deleted" message', async ({ programFixture }) => {
+  const message = await programFixture.getToastMessage();
+  expect(message).toContain('Successful Programs Deleted');
+});
+
+Given('Admin has deleted a program', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  await programFixture.clickYesButton();
+});
+
+When('Admin searches for "Deleted Program names"', async ({ programFixture }) => {
+  await programFixture.searchProgram('deleted-program-test');
+});
+
+When('Admin clicks on "No" button', async ({ programFixture }) => {
+  await programFixture.clickNoButton();
+});
+
+Then('Admin can see Programs are still selected and not deleted', async ({ programFixture }) => {
+  const selectedCount = await programFixture.getSelectedRowCount();
+  expect(selectedCount).toBeGreaterThanOrEqual(1);
+  const tableVisible = await programFixture.isTableVisible();
+  expect(tableVisible).toBe(true);
+});
+
+Given('Admin is on the Program Confirm Deletion Page after selecting a program to delete', async ({ programFixture }) => {
+  await programFixture.selectMultipleRows([0]);
+  await programFixture.clickDeleteButton();
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(true);
+});
+
+When('Admin Click on "X" button', async ({ programFixture }) => {
+  await programFixture.clickCloseButton();
+});
+
+Then('Admin can see Confirm Deletion form disappear', async ({ programFixture }) => {
+  const isVisible = await programFixture.isConfirmDialogVisible();
+  expect(isVisible).toBe(false);
+});
+
+// Pagination
+
+Given('Admin is logged in to LMS', async ({ page, loginFixture }) => {
+  await loginFixture.loginWithCredentials(process.env.EMAIL, process.env.PASSWORD, process.env.ROLE);
+  await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+});
+
+Given('Admin is on the Program page with multiple records', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  const rowCount = await programFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+});
+
+Given('Admin is on any page except the last page of Program table', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  const isLastDisabled = await programFixture.isLastPageDisabled();
+  if (!isLastDisabled) {
+    await programFixture.clickLastPage();
+    await programFixture.clickPrevPage();
+  }
+});
+
+Given('Admin is on the Program table on any page except the first page', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  await programFixture.clickNextPage();
+});
+
+Given('Admin is on any page except the first page of Program table', async ({ programFixture }) => {
+  await programFixture.navigateToProgram();
+  await programFixture.clickNextPage();
+});
+
+When('Admin clicks the next page option \\(>\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickNextPage();
+});
+
+When('Admin clicks the last page option \\(>>\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickLastPage();
+});
+
+When('Admin clicks the previous page option \\(<\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickPrevPage();
+});
+
+When('Admin clicks the first page option \\(<<\\) in the pagination control', async ({ programFixture }) => {
+  firstRowBefore = await programFixture.getFirstRowProgramName();
+  await programFixture.clickFirstPage();
+});
+
+When('Admin clicks {string} on the navigation bar', async ({ programFixture }, navItem) => {
+  await programFixture.clickProgramNavBar();
+});
+
+Then('Admin should navigate to the next page and see the next set of program records', async ({ programFixture }) => {
+  const firstRowAfter = await programFixture.getFirstRowProgramName();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the last page record on the table', async ({ programFixture }) => {
+  const isLastDisabled = await programFixture.isLastPageDisabled();
+  expect(isLastDisabled).toBe(true);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the previous page record on the table', async ({ programFixture }) => {
+  const firstRowAfter = await programFixture.getFirstRowProgramName();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing');
+});
+
+Then('Admin should see the very first page record on the table', async ({ programFixture }) => {
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain('Showing 1 to');
+});
+
+Then('{string} should be displayed', async ({ programFixture }, expectedText) => {
+  const paginationText = await programFixture.getPaginationText();
+  expect(paginationText).toContain(expectedText);
+});
+
+Then('Admin should see pagination icons disabled', async ({ programFixture }) => {
+  const allDisabled = await programFixture.areAllPaginationButtonsDisabled();
+  expect(allDisabled).toBe(true);
+});
+

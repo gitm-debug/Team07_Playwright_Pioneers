@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import logger from '../utils/logger.js';
 export class ProgramPage {
   constructor(page) {
     this.page = page;
@@ -27,10 +28,28 @@ export class ProgramPage {
     this.saveBtn = page.getByRole('button', { name: 'Save' });
     this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
     this.dialogCloseButton = page.getByLabel('Program Details').getByRole('button').filter({ hasText: /^$/ });
+//delete multiple prgm
+// Checkboxes
+    this.selectAllCheckbox = page.locator('table thead .p-checkbox');
+    this.rowCheckboxes = page.locator('table tbody .p-checkbox');/// recheck 
+
+// Delete button (toolbar at top)
+    this.deleteButton = page.locator('button').filter({ hasText: /delete/i });
+    this.deleteIcon = page.locator('button .pi-trash').locator('..');
+// Confirmation dialog
+    this.confirmDialog = page.locator('.p-dialog');
+    this.confirmYesBtn = this.confirmDialog.locator('button').filter({ hasText: /yes/i });
+    this.confirmNoBtn = this.confirmDialog.locator('button').filter({ hasText: /no/i });
+    this.confirmCloseBtn = this.confirmDialog.locator('.p-dialog-header-icon, .p-dialog .pi-times').locator('..');
+    this.confirmMessage = this.confirmDialog.locator('.p-dialog-content, .p-confirm-dialog-message');
+// Toast / Success message
+    this.toastMessage = page.locator('.p-toast-message');
+    this.toastText = page.locator('.p-toast-message-text');
+
     // Error messages 
     this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
     this.tableRows = page.locator('table tbody tr');
-    //-----------
+    //Sorting
     this.programNameHeader = page.locator('th[psortablecolumn="programName"]');
     this.programDescriptionHeader = page.locator('th[psortablecolumn="programDescription"]');
     this.programStatusHeader = page.locator('th[psortablecolumn="programStatus"]');
@@ -43,6 +62,19 @@ export class ProgramPage {
     this.cancelForEdit = page.getByText('Cancel');
     this.saveBtn = page.getByText('Save');
     this.successMessage = page.locator('.p-toast-detail, .p-toast-summary, .p-toast-message-text, [role="alert"]');
+    //pagination
+    this.paginator = page.locator('p-paginator');
+    this.firstBtn = page.locator('.p-paginator-first');
+    this.prevBtn = page.locator('.p-paginator-prev');
+    this.nextBtn = page.locator('.p-paginator-next');
+    this.lastBtn = page.locator('.p-paginator-last');
+    this.pageNumbers = page.locator('.p-paginator-pages .p-paginator-page');
+    this.rangeLabel = page.locator('.p-paginator-current');
+    this.tableRows = page.locator('table tbody tr');
+    this.tableFirstRow = page.locator('table tbody tr:first-child td:nth-child(2)');
+    this.tableLastRow = page.locator('table tbody tr:last-child td:nth-child(2)');
+    this.totalText = page.locator('text=/In total there are/i');
+    this.programNavBar = page.locator('mat-toolbar button#program, mat-toolbar button:has-text("Program")');
   }
   async navigateToProgramPage() {
     await this.programMenuBar.click();
@@ -180,14 +212,12 @@ export class ProgramPage {
   async searchProgram(searchTerm) {
     try {
       await this.page.keyboard.press('Escape');
-      await this.page.waitForTimeout(500);
-      await this.page.locator('.cdk-overlay-backdrop').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
+      await this.page.locator('.cdk-overlay-backdrop').waitFor({ state: 'hidden', timeout: 3000 }).catch(() => { });
       await this.searchBox.click();
-      await this.page.waitForTimeout(200);
       await this.searchBox.clear();
       await this.searchBox.fill(searchTerm);
       await this.searchBox.press('Enter');
-      await this.page.waitForTimeout(1000);
+      await this.page.waitForTimeout(500);
 
     } catch (error) {
       console.error(`Failed to search: ${error.message}`);
@@ -541,5 +571,171 @@ export class ProgramPage {
       if (arr[i].localeCompare(arr[i + 1]) < 0) return false;
     }
     return true;
+  }
+
+//Delete multiple
+async selectMultipleRows(indices) {
+    await this.page.keyboard.press('Escape');
+    await this.page.locator('.cdk-overlay-backdrop').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    await this.page.waitForTimeout(500);
+    for (const index of indices) {
+      await this.rowCheckboxes.nth(index).click();
+      await this.page.waitForTimeout(300);
+    }
+  }
+
+  async getSelectedRowCount() {
+    return await this.rowCheckboxes.locator('.p-checkbox-icon').count();
+  }
+
+  async isTableVisible() {
+    return await this.page.locator('table').isVisible();
+  }
+
+async isDeleteButtonEnabled() {
+    logger.step('Checking if delete button is enabled');
+    const btn = this.page.locator('button').filter({ hasText: /delete/i }).first();
+    if (await btn.count() === 0) {
+      const iconBtn = this.page.locator('button .pi-trash').locator('..');
+      return !(await iconBtn.first().isDisabled());
+    }
+    return !(await btn.isDisabled());
+  }
+
+  async clickDeleteButton() {
+    logger.step('Clicking delete button');
+    const btn = this.page.locator('button').filter({ hasText: /delete/i }).first();
+    if (await btn.count() === 0) {
+      const iconBtn = this.page.locator('button .pi-trash').locator('..');
+      await iconBtn.first().click();
+    } else {
+      await btn.click();
+    }
+    await this.page.waitForTimeout(1000);
+  }
+
+  // Confirmation dialog
+  async isConfirmDialogVisible() {
+    logger.step('Checking if confirmation dialog is visible');
+    return await this.confirmDialog.isVisible();
+  }
+
+  async clickYesButton() {
+    logger.step('Clicking Yes button on confirmation dialog');
+    await this.confirmYesBtn.click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async clickNoButton() {
+    logger.step('Clicking No button on confirmation dialog');
+    await this.confirmNoBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async clickCloseButton() {
+    logger.step('Clicking close (X) button on confirmation dialog');
+    await this.confirmCloseBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async getConfirmMessage() {
+    return await this.confirmMessage.textContent();
+  }
+
+  // Toast / Success message
+  async getToastMessage() {
+    logger.step('Getting toast message');
+    await this.page.waitForSelector('.p-toast-message', { timeout: 5000 });
+    return await this.toastText.textContent();
+  }
+
+  async isToastVisible() {
+    return await this.toastMessage.isVisible();
+  }
+
+ ///Pagination
+
+  async navigateToProgram() {
+    await this.page.goto('/program');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async clickNextPage() {
+    await this.nextBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async clickLastPage() {
+    await this.lastBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async clickPrevPage() {
+    await this.prevBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async clickFirstPage() {
+    await this.firstBtn.click();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async getFirstRowProgramName() {
+    return (await this.tableFirstRow.textContent()).trim();
+  }
+
+  async getLastRowProgramName() {
+    return (await this.tableLastRow.textContent()).trim();
+  }
+
+  async getPaginationText() {
+    return (await this.rangeLabel.textContent()).trim();
+  }
+
+  async getTotalProgramsText() {
+    return (await this.totalText.textContent()).trim();
+  }
+
+  async getTableRowCount() {
+    return await this.tableRows.count();
+  }
+
+  async isNextPageDisabled() {
+    return await this.nextBtn.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isPrevPageDisabled() {
+    return await this.prevBtn.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isFirstPageDisabled() {
+    return await this.firstBtn.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isLastPageDisabled() {
+    return await this.lastBtn.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async areAllPaginationButtonsDisabled() {
+    return (
+      (await this.isFirstPageDisabled()) &&
+      (await this.isPrevPageDisabled()) &&
+      (await this.isNextPageDisabled()) &&
+      (await this.isLastPageDisabled())
+    );
+  }
+
+  async getCurrentPageNumber() {
+    const highlighted = this.pageNumbers.locator('.p-highlight');
+    return await highlighted.textContent();
+  }
+
+  async getTotalPages() {
+    return await this.pageNumbers.count();
+  }
+
+  async clickProgramNavBar() {
+    await this.programNavBar.first().click();
+    await this.page.waitForLoadState('networkidle');
   }
 }
