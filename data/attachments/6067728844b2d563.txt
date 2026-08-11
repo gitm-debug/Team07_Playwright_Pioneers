@@ -1,0 +1,6 @@
+ Searching by partial: "Upda"
+Context set: currentSearchTerm = Upda
+Context set: currentSearchType = partial
+Verifying search results for: "partial"
+Found 6 results for partial search: "Upda"
+Programs verified by partial name: "Upda"

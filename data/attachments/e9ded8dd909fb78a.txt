@@ -1,7 +1,0 @@
-Context set: expectedMessage = Program Created Successfully
-Context set: currentProgramName = Docker-rfw
-Context set: currentProgramData = [object Object]
-Context set: testType = positive
-Success message verified: "Program Created Successfully"
-Program "Docker-rfw" created and stored!
-Current program count in storage: 2

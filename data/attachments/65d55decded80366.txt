@@ -1,4 +1,0 @@
-Context set: expectedMessage = Program Created Successfully
-Context set: currentProgramName = cobal-rfw
-Context set: currentProgramData = [object Object]
-Context set: testType = positive

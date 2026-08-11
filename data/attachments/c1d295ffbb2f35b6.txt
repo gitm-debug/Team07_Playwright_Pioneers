@@ -1,7 +1,0 @@
-Context set: expectedMessage = Program Created Successfully
-Context set: currentProgramName = python-rfw
-Context set: currentProgramData = [object Object]
-Context set: testType = positive
-Success message verified: "Program Created Successfully"
-Program "python-rfw" created and stored!
-Current program count in storage: 3
