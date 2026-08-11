@@ -185,6 +185,12 @@ Scenario: Sorting of Batch status in Descending order
   When Admin clicks on Arrow next to batch status
   Then Admin should see the Batch Status is sorted in Descending order
 
+#--------------Manage batch - search bar --------------------#
+@searchBatch
+Scenario: Search by batch name
+  When Admin enters the batch name in the search box
+  Then Admin should see the filtered batch details based on the batch name in the data table
+  
 # ---------- Batch page - Pagination ---------------------- #
 @batchPagination
 Scenario: Next Page Navigation

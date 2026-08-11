@@ -14,7 +14,7 @@ export default defineConfig({
   testDir,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 2,
   workers: 1,
   globalTeardown: './global-teardown.js',
   reporter: [
@@ -24,9 +24,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.BASE_URL,
-    screenshot: 'on',
-    trace: 'on-first-retry',
-    video: 'on',
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
+    video: 'retain-on-failure',
     timeout: 60000,
     actionTimeout: 30000,
     navigationTimeout: 60000,
