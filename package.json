@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test-noauth": "npx bddgen && npx playwright test --project=chromium-noauth",
-    "test-auth": "npx bddgen && npx playwright test --project=chromium-auth"
+    "chrometest-noauth": "npx bddgen && npx playwright test --project=chromium --grep=@noauth",
+    "chrometest-auth": "npx bddgen && npx playwright test --project=chromium --grep=@auth",
+    "webkittest-noauth": "npx bddgen && npx playwright test --project=webkit --grep=@noauth",
+    "webkittest-auth": "npx bddgen && npx playwright test --project=webkit --grep=@auth"
   },
   "keywords": [],
   "author": "",
