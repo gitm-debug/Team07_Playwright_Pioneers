@@ -1,0 +1,280 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: features/03_program.feature.spec.js >> Program Page Verification >> Verify stored program search >> Example #3
+- Location: .features-gen/features/03_program.feature.spec.js:159:5
+
+# Error details
+
+```
+Error: No valid program found in global storage!
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: LMS - Learning Management System
+      - generic [ref=e6]:
+        - button "Home" [ref=e7] [cursor=pointer]
+        - button "Program" [expanded] [ref=e8] [cursor=pointer]
+        - button "Batch" [ref=e9] [cursor=pointer]
+        - button "Logout" [ref=e10] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Manage Program
+        - generic [ref=e16]:
+          - button [disabled] [ref=e18]:
+            - generic [ref=e19]: 
+          - generic [ref=e21]:
+            - generic [ref=e22]: 
+            - textbox "Search..." [ref=e23]
+      - generic [ref=e24]:
+        - progressbar [ref=e26]
+        - generic [ref=e30]:
+          - grid [ref=e32]:
+            - rowgroup [ref=e33]:
+              - row [ref=e34]:
+                - columnheader [ref=e35]:
+                  - generic [ref=e37] [cursor=pointer]:
+                    - generic [ref=e38]:
+                      - checkbox [disabled]
+                    - checkbox
+                - columnheader "Program Name " [ref=e39] [cursor=pointer]:
+                  - text: Program Name
+                  - generic [ref=e40]: 
+                - columnheader "Program Description " [ref=e42] [cursor=pointer]:
+                  - text: Program Description
+                  - generic [ref=e43]: 
+                - columnheader "Program Status " [ref=e45] [cursor=pointer]:
+                  - text: Program Status
+                  - generic [ref=e46]: 
+                - columnheader "Edit / Delete" [ref=e48]
+            - rowgroup
+          - generic [ref=e50]:
+            - generic [ref=e51] [cursor=pointer]: Showing 0 to 0 of 0 entries
+            - button "" [disabled]
+            - button "" [disabled]
+            - button "1" [ref=e53] [cursor=pointer]
+            - button "" [disabled]
+            - button "" [disabled]
+          - generic [ref=e54]: In total there are 0 programs.
+  - generic [ref=e57]:
+    - menu:
+      - generic:
+        - menuitem "Add New Program" [active]
+```
+
+# Test source
+
+```ts
+  66  | Then('Description field is displayed', async ({ programFixture }) => {
+  67  |   // Step: Then Description field is displayed
+  68  |   // From: features\03_program.feature:26:6
+  69  |   await programFixture.verifyDescriptionField();
+  70  | });
+  71  | 
+  72  | Then('Status radio buttons is displayed', async ({ programFixture }) => {
+  73  |   // Step: Then Status radio buttons is displayed
+  74  |   // From: features\03_program.feature:26:6
+  75  |   await programFixture.verifyStatusRadioButtons();
+  76  | });
+  77  | //Add New Program functional validation
+  78  | 
+  79  | When('Admin clicks on {string}, enters details for fields using {string}, and clicks the program save button', async ({ programFixture }, buttonName, testDataKey) => {
+  80  |   // Step: When Admin clicks on "Add New Program", enters details for fields using "validProgram1", and clicks the program save button
+  81  |   // From: features\03_program.feature:40:5
+  82  |   const programData = testData.Programs[testDataKey];
+  83  | 
+  84  |   if (!programData) {
+  85  |     throw new Error(`Test data not found for key: ${testDataKey}`);
+  86  |   }
+  87  | 
+  88  |   await programFixture.addNewProgramMenuItem.waitFor({ state: 'visible' });
+  89  |   await programFixture.addNewProgramMenuItem.click();
+  90  |   await programFixture.dialog.waitFor({ state: 'visible', timeout: 5000 });
+  91  | 
+  92  |   await programFixture.fillProgramDetails(
+  93  |     programData.name,
+  94  |     programData.description,
+  95  |     programData.status
+  96  |   );
+  97  |   await programFixture.clickProgramSaveButton();
+  98  | 
+  99  |   // Storing for verification 
+  100 |   globalStorage.setContext('expectedMessage', programData.expectedMessage);
+  101 |   globalStorage.setContext('currentProgramName', programData.name);
+  102 |   globalStorage.setContext('currentProgramData', {
+  103 |     name: programData.name,
+  104 |     description: programData.description,
+  105 |     status: programData.status,
+  106 |     testDataKey: testDataKey
+  107 |   });
+  108 |   globalStorage.setContext('testType', programData.testType);
+  109 | });
+  110 | 
+  111 | 
+  112 | Then('Admin should see appropriate message for program', async ({ programFixture }) => {
+  113 |   // Step: Then Admin should see appropriate message for program
+  114 |   // From: features\03_program.feature:40:5
+  115 |   const expectedMessage = globalStorage.getContext('expectedMessage');
+  116 |   const testType = globalStorage.getContext('testType'); // 
+  117 | 
+  118 |   if (!expectedMessage) {
+  119 |     throw new Error('No expected message found in context!');
+  120 |   }
+  121 | 
+  122 |   const wasSuccessful = await programFixture.verifyAppropriateMessage(expectedMessage, testType);
+  123 | 
+  124 |   if (wasSuccessful) {
+  125 |     const currentProgramData = globalStorage.getContext('currentProgramData');
+  126 | 
+  127 |     if (!currentProgramData) {
+  128 |       throw new Error('No successful program data found in context');
+  129 |     }
+  130 | 
+  131 |     const storedProgram = globalStorage.addProgram(currentProgramData);
+  132 |     console.log(`Program "${storedProgram.name}" created and stored!`);
+  133 |   } else {
+  134 |     console.log('Program verification failed or was a negative case; not adding to global storage.');
+  135 |   }
+  136 | 
+  137 |   console.log(`Current program count in storage: ${globalStorage.getCount()}`);
+  138 | });
+  139 | When('Admin clicks on {string}, clicks on close icon on the top right corner of the Program details dialog box with out entering details', async ({ programFixture }, arg) => {
+  140 |   // Step: When Admin clicks on "Add New Program", clicks on close icon on the top right corner of the Program details dialog box with out entering details
+  141 |   // From: features\03_program.feature:66:5
+  142 |   await programFixture.clickAddNewProgram();
+  143 |   await programFixture.clickDialogCloseButton();
+  144 | });
+  145 | 
+  146 | Then('Admin should see Program details dialog box closed without creating new Program', async ({ programFixture }) => {
+  147 |   // Step: Then Admin should see Program details dialog box closed without creating new Program
+  148 |   // From: features\03_program.feature:67:5
+  149 |   await expect(programFixture.programDetailsDialog).not.toBeVisible();
+  150 | });
+  151 | 
+  152 | When('Admin clicks on {string}, clicks on cancel button of the Program details dialog box with out entering details', async ({ programFixture }, arg) => {
+  153 |   // Step: When Admin clicks on "Add New Program", clicks on cancel button of the Program details dialog box with out entering details
+  154 |   // From: features\03_program.feature:71:5
+  155 |   await programFixture.clickAddNewProgram();
+  156 |   await programFixture.clickCancelButton();
+  157 | });
+  158 | 
+  159 | When('Admin searches for stored program by {string}', async ({ programFixture }, searchType) => {
+  160 |   // Step: When Admin searches for stored program by "name"
+  161 |   // From: features\03_program.feature:77:5
+  162 |   const programData = globalStorage.getLastProgram();  
+  163 | 
+  164 |   if (!programData || !programData.name || programData.name.trim() === '') {
+  165 |     console.log('All programs in storage:', globalStorage.getAllPrograms());
+> 166 |     throw new Error('No valid program found in global storage!');
+      |           ^ Error: No valid program found in global storage!
+  167 |   }
+  168 |   let searchTerm = '';
+  169 |   if (searchType === 'name') {
+  170 |     searchTerm = programData.name;
+  171 |   } else if (searchType === 'description') {
+  172 |     searchTerm = programData.description;
+  173 |   } else if (searchType === 'partial') {
+  174 |     searchTerm = programData.name.substring(0, 4);
+  175 |     if (searchTerm.endsWith('-')) {
+  176 |       searchTerm = programData.name.substring(0, 5);
+  177 |     }
+  178 |   } else {
+  179 |     throw new Error(`Unknown search type: ${searchType}`);
+  180 |   }
+  181 | 
+  182 |   console.log(` Searching by ${searchType}: "${searchTerm}"`);
+  183 | 
+  184 |   await programFixture.searchProgram(searchTerm);
+  185 | 
+  186 |   globalStorage.setContext('currentSearchTerm', searchTerm);
+  187 |   globalStorage.setContext('currentSearchType', searchType);
+  188 | });
+  189 | 
+  190 | Then('Admin should see the program in search results for {string}', async ({ programFixture }, searchType) => {
+  191 |   // Step: Then Admin should see the program in search results for "name"
+  192 |   // From: features\03_program.feature:78:5
+  193 |   // 
+  194 |   const programData = globalStorage.getLastProgram();
+  195 |   const searchTerm = globalStorage.getContext('currentSearchTerm');
+  196 | 
+  197 |   if (!programData || !programData.name || programData.name.trim() === '') {
+  198 |     throw new Error('No valid program data found in storage!');
+  199 |   }
+  200 | 
+  201 |   console.log(`Verifying search results for: "${searchType}"`);
+  202 | 
+  203 |   if (searchType === 'name') {
+  204 |     await programFixture.verifyProgramInSearchResults(programData.name);
+  205 |     console.log(`Program verified by name: "${programData.name}"`);
+  206 |   } else if (searchType === 'description') {
+  207 |     await programFixture.verifyProgramByDescription(programData.description);
+  208 |     console.log(`Program verified by description: "${programData.description}"`);
+  209 |   } else if (searchType === 'partial') {
+  210 |     await programFixture.verifyPartialSearchResults(searchTerm || programData.name.substring(0, 4));
+  211 |     console.log(`Programs verified by partial name: "${searchTerm}"`);
+  212 |   } else {
+  213 |     throw new Error(`Unknown search type: ${searchType}`);
+  214 |   }
+  215 | });
+  216 | 
+  217 | When('Admin enters {string} in the search box', async ({ programFixture }, searchTerm) => {
+  218 |   // Step: When Admin enters "NonExistentProgram123" in the search box
+  219 |   // From: features\03_program.feature:87:5
+  220 |   await programFixture.searchProgram(searchTerm);
+  221 | });
+  222 | 
+  223 | Then('There should be zero results', async ({ programFixture }) => {
+  224 |   // Step: Then There should be zero results
+  225 |   // From: features\03_program.feature:88:5
+  226 |   await programFixture.verifyNoResults();
+  227 | });
+  228 | 
+  229 | When('Admin clicks on Edit option for a particular program', async ({programFixture}) => {
+  230 |   // Step: When Admin clicks on Edit option for a particular program
+  231 |   // From: features\03_program.feature:93:5
+  232 |    await programFixture.clickEditOnFirstProgram()
+  233 |   
+  234 | });
+  235 | 
+  236 | Then('Admin should see  Edit Program Details dialog for program', async ({programFixture}) => {
+  237 |   // Step: Then Admin should see  Edit Program Details dialog for program
+  238 |   // From: features\03_program.feature:94:5
+  239 |   await programFixture.verifyDialogVisible()
+  240 | });
+  241 | 
+  242 | When('Admin clicks on Edit option, edits the {string} and clicks on Save button', async ({programFixture}, field) => {
+  243 |   // Step: When Admin clicks on Edit option, edits the "name" and clicks on Save button
+  244 |   // From: features\03_program.feature:97:5
+  245 |    await programFixture.clickEditOnFirstProgram();
+  246 |   
+  247 |   if (field === 'name') {
+  248 |     const randomStr = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 8);
+  249 |     const updatedName = `Updated${randomStr}`;
+  250 |     await programFixture.editProgramName(updatedName);
+  251 |     // Fix: Use globalStorage.setContext instead of global.set
+  252 |     globalStorage.setContext('updatedProgramName', updatedName);
+  253 |   } else if (field === 'description') {
+  254 |     const randomStr = Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 10);
+  255 |     const updatedDescription = `Updated ${randomStr}`;
+  256 |     await programFixture.editProgramDescription(updatedDescription);
+  257 |     // Fix: Use globalStorage.setContext instead of global.set
+  258 |     globalStorage.setContext('updatedProgramDescription', updatedDescription);
+  259 |   } else if (field === 'status') {
+  260 |     const currentStatus = await programFixture.getCurrentStatus();
+  261 |     const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+  262 |     await programFixture.editProgramStatus(newStatus);
+  263 |     //  Fix: Use globalStorage.setContext instead of global.set
+  264 |     globalStorage.setContext('updatedProgramStatus', newStatus);
+  265 |   }
+  266 |   
+```

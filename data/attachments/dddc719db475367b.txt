@@ -1,5 +1,0 @@
- Edit dialog opened
-Program name updated to: "Updatedoqwolq"
-Context set: updatedProgramName = Updatedoqwolq
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"

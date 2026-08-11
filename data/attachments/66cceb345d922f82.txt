@@ -1,5 +1,0 @@
- Edit dialog opened
- Program description updated to: "Updated wxsowiws"
-Context set: updatedProgramDescription = Updated wxsowiws
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
