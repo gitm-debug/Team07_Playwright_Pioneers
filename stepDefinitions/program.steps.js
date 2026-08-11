@@ -321,10 +321,8 @@ Then('Admin should see the Program Name is sorted in Ascending order', async ({p
 });
 
 Given('Admin is in program page where Program names are sorted in ascending order', async ({programFixture}) => {
-  const names = await programFixture.getProgramNames();
-  if (!programFixture.isSortedAscending(names)) {
-    await programFixture.clickProgramNameArrow();
-  }
+  await programFixture.navigate();
+  await programFixture.clickProgramNameArrow();
   const sortedNames = await programFixture.getProgramNames();
   expect(programFixture.isSortedAscending(sortedNames)).toBe(true);
 });
@@ -344,10 +342,8 @@ Then('Admin should see the Program Description is sorted in Ascending order', as
 });
 
 Given('Admin is in program page where Program descriptions are sorted in ascending order', async ({programFixture}) => {
-  const descriptions = await programFixture.getProgramDescriptions();
-  if (!programFixture.isSortedAscending(descriptions)) {
-    await programFixture.clickProgramDescriptionArrow();
-  }
+  await programFixture.navigate();
+  await programFixture.clickProgramDescriptionArrow();
   const sortedDescriptions = await programFixture.getProgramDescriptions();
   expect(programFixture.isSortedAscending(sortedDescriptions)).toBe(true);
 });
@@ -367,10 +363,8 @@ Then('Admin should see the Program status sorted in Ascending order', async ({pr
 });
 
 Given('Admin is in program page where Program status are sorted in ascending order', async ({programFixture}) => {
-  const statuses = await programFixture.getProgramStatuses();
-  if (!programFixture.isSortedAscending(statuses)) {
-    await programFixture.clickProgramStatusArrow();
-  }
+  await programFixture.navigate();
+  await programFixture.clickProgramStatusArrow();
   const sortedStatuses = await programFixture.getProgramStatuses();
   expect(programFixture.isSortedAscending(sortedStatuses)).toBe(true);
 });
