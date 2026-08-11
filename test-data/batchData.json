@@ -3,6 +3,12 @@
         "alphabetsBatchname": {
             "batchNameSuffix": "abcd" 
         },
+        "validAllData": {
+            "batchDescription": "Regular API class",
+            "batchNameSuffix": "987",
+            "noOfClasses": "20",
+            "status": "active"            
+        },
         "validMandatoryData": {
             "batchNameSuffix": "111",
             "noOfClasses": "5",

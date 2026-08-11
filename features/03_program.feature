@@ -138,7 +138,7 @@ Feature: Program Page Verification
     When Admin clicks on Arrow next to Program status
     Then Admin should see the Program status sorted in Descending order
 
-      # ---------------------Delete batch validation------------------------#
+      # ---------------------Delete program validation------------------------#
 @displayDeleteConfirmForPrg @Delete
 Scenario: Display Delete Confirmation For Program
   When Admin clicks on delete icon on any row of the program table
@@ -161,7 +161,67 @@ Scenario: close icon functionality for delete program
   When Admin clicks on delete icon on any row of the program table
   When Admin clicks on the close icon on confirm alert box of program
   Then Admin should see the alert box closed and see program page
+#Delete multiple program
+
+Scenario: Select multiple programs
+When Admin selects more than one program by clicking on the checkbox
+Then the multiple delete button under manage program must be enabled
+
+Scenario: Delete Multiple programs
+Given Admin has selected multiple programs
+When Admin clicks on the delete button on the left top of the program page
+Then Admin lands on the Confirmation form
+
+Scenario: Delete selected program
+Given Admin is on the Confirmation form
+When Admin clicks on "Yes" button
+Then Admin can see "Successful Programs Deleted" message
+
+Scenario: Deleted program Visibility
+Given Admin has deleted a program
+When Admin searches for "Deleted Program names"
+Then There should be zero results
+
+Scenario: Cancel Multiple Deletion
+Given Admin is on the Confirmation form
+When Admin clicks on "No" button
+Then Admin can see Programs are still selected and not deleted
+
+Scenario: Close Multiple deletion confirmation
+Given Admin is on the Program Confirm Deletion Page after selecting a program to delete
+When Admin Click on "X" button
+Then Admin can see Confirm Deletion form disappear
+
+# Pagination
+  Scenario: Next Page Navigation
+    Given Admin is on the Program page with multiple records
+    When Admin clicks the next page option (>) in the pagination control
+    Then Admin should navigate to the next page and see the next set of program records
+
+  Scenario: Last Page Navigation
+    Given Admin is on any page except the last page of Program table
+    When Admin clicks the last page option (>>) in the pagination control
+    Then Admin should see the last page record on the table
+
+  Scenario: Previous Page Navigation
+    Given Admin is on the Program table on any page except the first page
+    When Admin clicks the previous page option (<) in the pagination control
+    Then Admin should see the previous page record on the table
+
+  Scenario: First Page Navigation
+    Given Admin is on any page except the first page of Program table
+    When Admin clicks the first page option (<<) in the pagination control
+    Then Admin should see the very first page record on the table
+
+  Scenario: pagination when there are no records
+    Given Admin is on home page after login
+    When Admin clicks "Program" on the navigation bar
+    Then "Showing 0 to 0 of 0 entries" should be displayed
+
+  Scenario: pagination when there are less than 5 records
+    Given Admin is on home page after login
+    When Admin clicks "Program" on the navigation bar
+    Then Admin should see pagination icons disabled   
 
 
-     
 

@@ -193,7 +193,30 @@ When('Admin enters the {string} to create new batch using {string}', async ({bat
     const programName = program.name;
     const batchData = testData.batches[testDataKey];
 
-    if (data === 'data to mandatory fields and click save') {       
+    if (data === 'data to all fields and click save' ) {
+        await batchFixture.selectProgramName(programName);
+        await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
+        await batchFixture.descriptionTextBox.fill(batchData.batchDescription);
+        if(batchData.status === 'active')
+            await batchFixture.activeRadioButton.click();
+        else 
+            await batchFixture.inactiveRadioButton.click();
+        await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
+        await batchFixture.clickSaveButton();
+
+        const createdBatch = globalStorage.addBatch({
+            programName: programName,
+            batchDescription: batchData.batchDescription,
+            batchNameSuffix: batchData.batchNameSuffix,
+            status: batchData.status,
+            noOfClasses: batchData.noOfClasses
+        });
+
+        logger.info(`Batch created with all data and stored: ${JSON.stringify(createdBatch)}`);
+        console.log(`Batch created with all data and stored: ${JSON.stringify(createdBatch)}`);
+    }
+
+    else if (data === 'data to mandatory fields and click save') {       
         await batchFixture.selectProgramName(programName);
         await batchFixture.batchNameSuffixBox.fill(batchData.batchNameSuffix);
         if(batchData.status === 'active')
@@ -202,6 +225,16 @@ When('Admin enters the {string} to create new batch using {string}', async ({bat
             await batchFixture.inactiveRadioButton.click();
         await batchFixture.noOfClassesInputBox.fill(batchData.noOfClasses);
         await batchFixture.clickSaveButton();
+
+        const createdBatch = globalStorage.addBatch({
+            programName: programName,
+            batchNameSuffix: batchData.batchNameSuffix,
+            status: batchData.status,
+            noOfClasses: batchData.noOfClasses
+        });
+
+        logger.info(`Batch created with mandatory data and stored: ${JSON.stringify(createdBatch)}`);
+        console.log(`Batch created with mandatory data and stored: ${JSON.stringify(createdBatch)}`);
 
     } else if (data === 'leaves blank one of the mandatory fields') {
         await batchFixture.selectProgramName(programName);
@@ -397,10 +430,8 @@ Then('Admin should see the Batch Name is sorted in Ascending order', async ({bat
 });
 
 Given('Admin is in batch page where Batch names are sorted in ascending order', async ({batchFixture}) => {
-  const names = await batchFixture.getBatchNames();
-  if (!batchFixture.isSortedAscending(names)) {
-    await batchFixture.clickBatchNameArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchNameArrow();
   const sortedNames = await batchFixture.getBatchNames();
   expect(batchFixture.isSortedAscending(sortedNames)).toBe(true);
 });
@@ -424,10 +455,8 @@ Then('Admin should see the Batch Description is sorted in Ascending order', asyn
 });
 
 Given('Admin is in batch page where Batch descriptions are sorted in ascending order', async ({batchFixture}) => {
-  const descriptions = await batchFixture.getBatchDescriptions();
-  if (!batchFixture.isSortedAscending(descriptions)) {
-    await batchFixture.clickBatchDescriptionArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchDescriptionArrow();
   const sortedDescriptions = await batchFixture.getBatchDescriptions();
   expect(batchFixture.isSortedAscending(sortedDescriptions)).toBe(true);
 });
@@ -450,10 +479,8 @@ Then('Admin should see the Number of Classes is sorted in Ascending order', asyn
 });
 
 Given('Admin is in batch page where Number of classes are sorted in ascending order', async ({batchFixture}) => {
-  const classes = await batchFixture.getNoOfClasses();
-  if (!batchFixture.isSortedAscendingNumeric(classes)) {
-    await batchFixture.clickNoOfClassesArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickNoOfClassesArrow();
   const sortedClasses = await batchFixture.getNoOfClasses();
   expect(batchFixture.isSortedAscendingNumeric(sortedClasses)).toBe(true);
 });
@@ -477,10 +504,8 @@ Then('Admin should see the Batch Status is sorted in Ascending order', async ({b
 });
 
 Given('Admin is in batch page where Batch status are sorted in ascending order', async ({batchFixture}) => {
-  const statuses = await batchFixture.getBatchStatuses();
-  if (!batchFixture.isSortedAscending(statuses)) {
-    await batchFixture.clickBatchStatusArrow();
-  }
+  await batchFixture.navigate();
+  await batchFixture.clickBatchStatusArrow();
   const sortedStatuses = await batchFixture.getBatchStatuses();
   expect(batchFixture.isSortedAscending(sortedStatuses)).toBe(true);
 });
@@ -490,4 +515,167 @@ Then('Admin should see the Batch Status is sorted in Descending order', async ({
   expect(statuses.length).toBeGreaterThan(0);
   expect(statuses.every(s => s.length > 0)).toBe(true);
   expect(batchFixture.isSortedDescending(statuses)).toBe(true);
+});
+
+// -----Manage batch - search bar ----------------//
+When('Admin search batch in the search box by {string}', async ({batchFixture, Page}, searchType) => {
+    await Page.pause();
+    if(searchType === 'batchName') {
+        const batch = globalStorage.getLastBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const status = batch.status;
+
+        await (batchFixture.searchBox).click();
+        await Page.waitForTimeout(200);
+        await (batchFixture.searchBox).clear();
+        await (batchFixture.searchBox).fill(batchNamePrefix);    
+        await (batchFixture.searchBox).press('Enter');
+    }
+    else if (searchType === 'batchDescription') {
+        const batch = globalStorage.getPreviousBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const batchDescription = batch.batchDescription;
+        const status = batch.status;
+
+        await (batchFixture.searchBox).click();
+        await Page.waitForTimeout(200);
+        await (batchFixture.searchBox).clear();
+        await (batchFixture.searchBox).fill(batchDescription);    
+        await (batchFixture.searchBox).press('Enter');
+    }
+});
+
+Then('Admin should see the filtered batch details based on the {string} in the data table', async ({batchFixture}, searchType) => {
+    if(searchType === 'batchName') {
+        const batch = globalStorage.getLastBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const status = batch.status;
+
+        const actualResults = await batchFixture.verifyBatchInSerchBox(batchNamePrefix);
+        //logger.info('Actual batch data: ' ,actualResults);
+        logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
+        await expect(actualResults.batchName).toContain(batchNamePrefix);
+    }
+    else if(searchType === 'batchDescription') {
+        const batch = globalStorage.getPreviousBatch();
+
+        const batchNamePrefix = batch.programName;
+        const batchnameSuffix = batch.batchNameSuffix;
+        const batchDescription = batch.batchDescription;
+        const status = batch.status;
+
+        const actualResults = await batchFixture.verifyBatchInSerchBox(batchDescription);
+        //logger.info('Actual batch data: ' ,actualResults);
+        logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
+        await expect(actualResults.batchDescription).toContain(batchDescription);
+    }
+});
+
+// Batch Pagination
+let firstRowBefore;
+
+Given('Admin is on batch page with multiple program records', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const rowCount = await batchFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+});
+
+Given('Admin is on batch page except the last page of Program table', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const isLastDisabled = await batchFixture.isLastPageDisabled();
+  if (!isLastDisabled) {
+    await batchFixture.clickLastPage();
+    await batchFixture.clickPrevPage();
+  }
+});
+
+Given('Admin is on the batch table on any page except the first page', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  await batchFixture.clickNextPage();
+});
+
+Given('Admin is on any page except the first page of batch table', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  await batchFixture.clickNextPage();
+});
+
+Given('Admin is on the batch page with multiple pages of batch record', async ({batchFixture}) => {
+  await batchFixture.navigate();
+  const rowCount = await batchFixture.getTableRowCount();
+  expect(rowCount).toBeGreaterThan(0);
+  const isNextDisabled = await batchFixture.isNextPageDisabled();
+  if (!isNextDisabled) {
+    await batchFixture.clickNextPage();
+  }
+});
+
+When('Admin clicks the next page option \\(>) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickNextPage();
+});
+
+When('Admin clicks the last page option \\(>>\\) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickLastPage();
+});
+
+When('Admin clicks the previous page option \\(<\\) in the batch pagination control', async ({batchFixture}) => {
+  firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  await batchFixture.clickPrevPage();
+});
+
+When('Admin clicks the first page option \\(<<\\) in the batch pagination control', async ({batchFixture}) => {
+  await batchFixture.clickFirstPage();
+});
+
+When('Admin clicks first page link on the batch data table', async ({batchFixture}) => {
+  await batchFixture.clickFirstPage();
+});
+
+Then('Admin should see the Next enabled link', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isNextPageDisabled();
+  expect(isDisabled).toBe(false);
+});
+
+Then('Admin should see the last page link with next page link disabled on the table', async ({batchFixture}) => {
+  const isNextDisabled = await batchFixture.isNextPageDisabled();
+  expect(isNextDisabled).toBe(true);
+  const isLastDisabled = await batchFixture.isLastPageDisabled();
+  expect(isLastDisabled).toBe(true);
+});
+
+Then('Admin should see the previous page on the table', async ({batchFixture}) => {
+  const firstRowAfter = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
+  expect(firstRowAfter).not.toBe(firstRowBefore);
+});
+
+Then('Admin should see the very first page on the data table', async ({batchFixture}) => {
+  const isFirstDisabled = await batchFixture.isFirstPageDisabled();
+  expect(isFirstDisabled).toBe(true);
+});
+
+Then('Admin should see the Previous arrow \\(<\\) disabled', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isPrevPageDisabled();
+  expect(isDisabled).toBe(true);
+});
+
+Then('Admin should see the First page arrow \\(<<\\) disabled', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isFirstPageDisabled();
+  expect(isDisabled).toBe(true);
+});
+
+Then('Admin should see Next arrow \\(>\\) enabled', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isNextPageDisabled();
+  expect(isDisabled).toBe(false);
+});
+
+Then('Admin should see Last page arrow \\(>>\\) enabled', async ({batchFixture}) => {
+  const isDisabled = await batchFixture.isLastPageDisabled();
+  expect(isDisabled).toBe(false);
 });

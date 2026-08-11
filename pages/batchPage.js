@@ -36,10 +36,10 @@ export class BatchPage {
     this.activeRadioButton = page.locator('.p-radiobutton-box').first();
     this.inactiveRadioButton = page.locator('div:nth-child(3) > #batchStatus > .p-radiobutton > .p-radiobutton-box');
 
-    this.batchNameSortHeader = 'th[psortablecolumn="batchName"]';
-    this.batchDescriptionSortHeader = 'th[psortablecolumn="batchDescription"]';
-    this.batchStatusSortHeader = 'th[psortablecolumn="batchStatus"]';
-    this.batchNoOfClassesSortHeader = 'th[psortablecolumn="batchNoOfClasses"]';
+    this.batchNameSortHeader = page.locator('th[psortablecolumn="batchName"]');
+    this.batchDescriptionSortHeader = page.locator('th[psortablecolumn="batchDescription"]');
+    this.batchStatusSortHeader = page.locator('th[psortablecolumn="batchStatus"]');
+    this.batchNoOfClassesSortHeader = page.locator('th[psortablecolumn="batchNoOfClasses"]');
 
     this.batchNamePrefixBox = page.locator('#batchProg');
     this.batchNameSuffixBox = page.getByRole('textbox', { name: 'Batch Name *' });
@@ -60,6 +60,8 @@ export class BatchPage {
     this.yesButtonForDelete = page.getByRole('button', { name: 'Yes' });
     this.noButtonForDelete = page.getByRole('button', { name: 'No' });
     this.closeButtonForDelete = page.locator('p-confirmdialog').getByRole('button').filter({ hasText: /^$/ });
+
+    this.searchBox = page.getByRole('textbox', { name: 'Search...' });
   }
 
   async navigate() {
@@ -100,19 +102,23 @@ export class BatchPage {
   }
 
   async clickBatchNameArrow() {
-    await this.page.click(this.batchNameSortHeader);
+    await this.batchNameSortHeader.click();
+    await this.page.waitForTimeout(500);
   }
 
   async clickBatchDescriptionArrow() {
-    await this.page.click(this.batchDescriptionSortHeader);
+    await this.batchDescriptionSortHeader.click();
+    await this.page.waitForTimeout(500);
   }
 
   async clickBatchStatusArrow() {
-    await this.page.click(this.batchStatusSortHeader);
+    await this.batchStatusSortHeader.click();
+    await this.page.waitForTimeout(500);
   }
 
   async clickNoOfClassesArrow() {
-    await this.page.click(this.batchNoOfClassesSortHeader);
+    await this.batchNoOfClassesSortHeader.click();
+    await this.page.waitForTimeout(500);
   }
 
   async getBatchNames() {
@@ -184,5 +190,67 @@ export class BatchPage {
   }
   async clickDialogCloseButton() {
     await this.dialogCloseButton.click();
+  }
+
+  async verifyBatchInSerchBox(batchDetail) {
+    try {
+      await this.page.waitForTimeout(1000);
+      const row = this.page.locator('table tbody tr').filter({ hasText: batchDetail });
+      const count = await row.count();
+
+      if (count === 0) {
+        throw new Error(`Batch "${batchDetail}" not found in search results`);
+      }
+
+      const cells = row.first().locator('td');
+      const batchName = await cells.nth(1).textContent();
+      const batchDescription = await cells.nth(2).textContent();
+      const batchstatus = await cells.nth(3).textContent();
+      const noOfClasses = await cells.nth(4).textContent();
+      const programName = await cells.nth(5).textContent();
+      return { batchName, batchDescription, batchstatus, noOfClasses, programName };
+    } catch (error) {
+      throw new Error(`batchDetail not found: ${error.message}`);     
+    }
+  }
+   
+  async clickNextPage() {
+    await this.nextPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickLastPage() {
+    await this.lastPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickPrevPage() {
+    await this.previousPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickFirstPage() {
+    await this.firstPageButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async isNextPageDisabled() {
+    return await this.nextPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isPrevPageDisabled() {
+    return await this.previousPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isFirstPageDisabled() {
+    return await this.firstPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async isLastPageDisabled() {
+    return await this.lastPageButton.evaluate((el) => el.disabled || el.classList.contains('p-disabled'));
+  }
+
+  async getTableRowCount() {
+    return await this.batchTableRows.count();
   }
 }
