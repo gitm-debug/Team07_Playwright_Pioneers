@@ -1,5 +1,0 @@
- Edit dialog opened
-Program name updated to: "Updatedlehyql"
-Context set: updatedProgramName = Updatedlehyql
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"
