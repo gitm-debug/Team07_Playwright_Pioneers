@@ -1,4 +1,0 @@
-  ➜ [2026-08-11T04:51:06.207Z] [STEP] Admin is on home page after login
-  ➜ [2026-08-11T04:51:08.521Z] [STEP] Admin clicks Batch on the navigation bar
-  ➜ [2026-08-11T04:51:08.857Z] [STEP] Admin should see the following elements on Batch page
-[2026-08-11T04:51:08.881Z] [INFO] Element "Manage Batch Page heading" displayed: true

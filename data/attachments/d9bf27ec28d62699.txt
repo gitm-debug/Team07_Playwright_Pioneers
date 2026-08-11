@@ -1,5 +1,0 @@
- Searching by name: "azure-nnb"
-Context set: currentSearchTerm = azure-nnb
-Context set: currentSearchType = name
-Verifying search results for: "name"
-Program verified by name: "azure-nnb"
