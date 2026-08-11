@@ -1,0 +1,6 @@
+Context set: expectedMessage = Program created successfully
+Context set: currentProgramName = Java-nnb
+Context set: currentProgramData = [object Object]
+Context set: testType = positive
+Program "Java-nnb" created and stored!
+Current program count in storage: 1

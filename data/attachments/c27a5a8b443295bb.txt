@@ -1,0 +1,6 @@
+Context set: expectedMessage = Status is required.
+Context set: currentProgramName = TestProg
+Context set: currentProgramData = [object Object]
+Context set: testType = negative
+Program verification failed or was a negative case; not adding to global storage.
+Current program count in storage: 0
