@@ -516,9 +516,11 @@ Then('Admin should see the filtered batch details based on the batch name in the
     const status = batch.status;
 
     const actualResults = await batchFixture.verifyBatchInSerchBox(batchNamePrefix);
-    logger.info('Actual batch data: ' ,actualResults);
+    //logger.info('Actual batch data: ' ,actualResults);
+    logger.info(`Actual batch data: ${JSON.stringify(actualResults)}`);
     await expect(actualResults.batchName).toContain(batchNamePrefix);
-  
+});
+
 // Batch Pagination
 let firstRowBefore;
 
@@ -557,7 +559,7 @@ Given('Admin is on the batch page with multiple pages of batch record', async ({
   }
 });
 
-When('Admin clicks the next page option \\(>\\) in the batch pagination control', async ({batchFixture}) => {
+When('Admin clicks the next page option \\(>) in the batch pagination control', async ({batchFixture}) => {
   firstRowBefore = await batchFixture.batchTableRows.first().locator('td').nth(1).textContent();
   await batchFixture.clickNextPage();
 });
