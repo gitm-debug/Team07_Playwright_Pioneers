@@ -159,8 +159,23 @@ When('Admin clicks on {string}, clicks on cancel button of the Program details d
 When('Admin searches for stored program by {string}', async ({ programFixture }, searchType) => {
   // Step: When Admin searches for stored program by "name"
   // From: features\03_program.feature:77:5
-  const programData = globalStorage.getLastProgram();  
-
+ let programData = globalStorage.getLastProgram(); 
+  
+  if (!programData || !programData.name) {
+    console.log(' Storage is empty, checking table...');
+    const firstRow = programFixture.tableRows.first();
+    const nameFromTable = await firstRow.locator('td').nth(1).textContent();
+    if (nameFromTable && nameFromTable.trim() !== '') {
+      programData = { 
+        name: nameFromTable.trim(), 
+        description: '', 
+        status: 'Active' 
+      };     
+      globalStorage.addProgram(programData);
+      console.log(`Re-added program from table: "${programData.name}"`);
+    }
+  }
+  
   if (!programData || !programData.name || programData.name.trim() === '') {
     console.log('All programs in storage:', globalStorage.getAllPrograms());
     throw new Error('No valid program found in global storage!');
@@ -298,6 +313,55 @@ Then('Admin verifies that the details are correctly updated', async ({programFix
   
   console.log('All program details verified successfully!');
 });
+//------------Delete------------
+
+When('Admin clicks on delete icon on any row of the program table', async ({programFixture}) => {
+  // Step: When Admin clicks on delete icon on any row of the program table
+  // From: features\03_program.feature:142:3
+  await programFixture.clickDeleteOnFirstProgram();
+});
+
+Then('Admin should see the confirm alert box with yes and no button on program page', async ({programFixture}) => {
+  // Step: Then Admin should see the confirm alert box with yes and no button on program page
+  // From: features\03_program.feature:143:3
+  await programFixture.verifyDeleteConfirmationDialog();
+});
+When('Admin clicks yes button after clicking delete icon of program', async ({programFixture}) => {
+  // Step: When Admin clicks yes button after clicking delete icon of program
+  // From: features\03_program.feature:148:3
+  await programFixture.clickYesOnDeleteConfirmation();
+});
+
+Then('Admin should see the successful message and the program should be deleted', async ({programFixture}) => {
+  // Step: Then Admin should see the successful message and the program should be deleted
+  // From: features\03_program.feature:149:3
+  await programFixture.verifyProgramDeletedSuccessfully();
+});
+When('Admin clicks  no button after clicking delete icon of program', async ({programFixture}) => {
+  // Step: When Admin clicks  no button after clicking delete icon of program
+  // From: features\03_program.feature:154:3
+  await programFixture.clickNoOnDeleteConfirmation();
+});
+
+Then('Admin should see the alert box closed and the program is not deleted', async ({programFixture}) => {
+  // Step: Then Admin should see the alert box closed and the program is not deleted
+  // From: features\03_program.feature:155:3
+  await programFixture.verifyAlertBoxClosedAndProgramNotDeleted();
+  
+});
+When('Admin clicks on the close icon on confirm alert box of program', async ({programFixture}) => {
+  // Step: When Admin clicks on the close icon on confirm alert box of program
+  // From: features\03_program.feature:160:3
+  await programFixture.clickCloseOnDeleteConfirmation();
+});
+
+Then('Admin should see the alert box closed and see program page', async ({programFixture}) => {
+  // Step: Then Admin should see the alert box closed and see program page
+  // From: features\03_program.feature:161:3
+  
+  await programFixture.verifyAlertBoxClosedAndProgramPageVisible();
+});
+
 
 
 

@@ -55,6 +55,8 @@ Feature: Program Page Verification
      | spaceInName               |
      | startsWithHyphen          | 
      | invalidDescription        |
+     | lengthyName               |
+     | lengthyDescription        |
      | emptyStatus               |
      | duplicateProgram          |
      | emptyPrgSubmission        |
@@ -129,11 +131,36 @@ Feature: Program Page Verification
   Scenario: Sorting of Program status in Ascending order
     When Admin clicks on Arrow next to Program status
     Then Admin should see the Program status sorted in Ascending order
+
    @progrmSort
   Scenario: Sorting of Program status in Descending order
     Given Admin is in program page where Program status are sorted in ascending order
     When Admin clicks on Arrow next to Program status
     Then Admin should see the Program status sorted in Descending order
+
+      # ---------------------Delete batch validation------------------------#
+@displayDeleteConfirmForPrg @Delete
+Scenario: Display Delete Confirmation For Program
+  When Admin clicks on delete icon on any row of the program table
+  Then Admin should see the confirm alert box with yes and no button on program page
+
+@deleteProgramSuccessfully @Delete
+Scenario: Delete program Successfully on batch page
+  When Admin clicks on delete icon on any row of the program table
+  When Admin clicks yes button after clicking delete icon of program
+  Then Admin should see the successful message and the program should be deleted
+
+@cancelProgram @Delete
+Scenario: Cancel program deletion on batch page
+  When Admin clicks on delete icon on any row of the program table
+  When Admin clicks  no button after clicking delete icon of program
+  Then Admin should see the alert box closed and the program is not deleted
+
+@closeIconDeleteProgram @Delete
+Scenario: close icon functionality for delete program
+  When Admin clicks on delete icon on any row of the program table
+  When Admin clicks on the close icon on confirm alert box of program
+  Then Admin should see the alert box closed and see program page
 
 
      

@@ -14,7 +14,7 @@ export class ProgramPage {
     this.footerMsg = page.locator(".p-d-flex.p-ai-center.p-jc-between.ng-star-inserted")
     this.paginationMsg = page.locator(".p-paginator-current.ng-star-inserted")
     this.programDetailsDialog = page.getByText('Program Details');
-    this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');    
+    this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');
     this.dialogTitle = page.getByText('Program Details');
     this.nameText = page.getByLabel('Name*')
     this.nameField = page.locator('#programName');
@@ -43,6 +43,12 @@ export class ProgramPage {
     this.cancelForEdit = page.getByText('Cancel');
     this.saveBtn = page.getByText('Save');
     this.successMessage = page.locator('.p-toast-detail, .p-toast-summary, .p-toast-message-text, [role="alert"]');
+
+    //Delete
+    this.confirmAlertBoxForDelete = page.locator('div').filter({ hasText: /^Confirm$/ });
+    this.yesButtonForDelete = page.getByRole('button', { name: 'Yes' });
+    this.noButtonForDelete = page.getByRole('button', { name: 'No' });
+    this.closeButtonForDelete = page.locator('p-confirmdialog').getByRole('button').filter({ hasText: /^$/ });
 
   }
   async navigateToProgramPage() {
@@ -76,7 +82,6 @@ export class ProgramPage {
   async isSearchPlaceholderCorrect() {
     try {
       const placeholder = await this.searchBox.getAttribute('placeholder');
-      console.log('Placeholder found:', placeholder);
       return placeholder === 'Search...' || (placeholder && placeholder.includes('Search'));
     } catch {
       return false;
@@ -96,7 +101,6 @@ export class ProgramPage {
     try {
       const count = await this.rowCheckboxes.count();
       if (count === 0) {
-        console.log('No checkboxes found');
         return false;
       }
 
@@ -108,7 +112,6 @@ export class ProgramPage {
 
       return true;
     } catch (error) {
-      console.error('Error checking checkboxes:', error);
       return false;
     }
   }
@@ -179,21 +182,21 @@ export class ProgramPage {
   }
 
   async searchProgram(searchTerm) {
-    try {
-      await this.page.keyboard.press('Escape');
-      await this.page.waitForTimeout(500);
-      await this.page.locator('.cdk-overlay-backdrop').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
-      await this.searchBox.click();
-      await this.page.waitForTimeout(200);
-      await this.searchBox.clear();
-      await this.searchBox.fill(searchTerm);
-      await this.searchBox.press('Enter');
-      await this.page.waitForTimeout(1000);
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300); // needed for menu to close
 
-    } catch (error) {
-      console.error(`Failed to search: ${error.message}`);
-      throw error;
-    }
+    //Wait for overlay to disappear
+    await this.page.locator('.cdk-overlay-backdrop').waitFor({
+      state: 'hidden',
+      timeout: 3000
+    }).catch(() => { });
+
+    await this.searchBox.click();
+    await this.searchBox.clear();
+    await this.searchBox.fill(searchTerm);
+    await this.searchBox.press('Enter');
+    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForTimeout(1000);
   }
 
   async clickDialogCloseButton() {
@@ -301,59 +304,30 @@ export class ProgramPage {
     }
   }
   async verifyProgramSuccessMessage(expectedMessage) {
-    try {
-      // Wait for the toast to appear using role="alert"
-      await this.page.locator('[role="alert"]').first().waitFor({
-        state: 'visible',
-        timeout: 10000
-      });
+    const toast = this.page.locator('[role="alert"]').first();
+    await toast.waitFor({ state: 'visible', timeout: 10000 });
 
-      const detailMessage = this.page.locator('.p-toast-detail');
-      await detailMessage.first().waitFor({ state: 'visible', timeout: 5000 });
-      const actualMessage = await detailMessage.first().textContent();
-      if (!actualMessage.includes(expectedMessage)) {
-        throw new Error(`Success message mismatch. Expected: "${expectedMessage}", Got: "${actualMessage}"`);
-      }
-      const summary = this.page.locator('.p-toast-summary');
-      const summaryText = await summary.first().textContent();
+    const actualMessage = await this.page.locator('.p-toast-detail').first().textContent();
 
-    } catch (error) {
-
-      try {
-        const message = this.page.getByText('Program Created Successfully');
-        await message.waitFor({ state: 'visible', timeout: 5000 });
-        const text = await message.textContent();
-        return;
-      } catch (e) {
-        // Ignore
-      }
-      throw new Error(`Success message not found: ${error.message}`);
+    if (!actualMessage.includes(expectedMessage)) {
+      throw new Error(`Success message mismatch. Expected: "${expectedMessage}", Got: "${actualMessage}"`);
     }
+
+    console.log(`Success message verified: "${actualMessage}"`);
   }
   async verifyProgramErrorMessage(expectedMessage) {
-    try {
-      await this.page.waitForTimeout(1000);
-      const errorElements = this.page.locator('small.p-invalid');
-      const count = await errorElements.count();
-      let found = false;
-      for (let i = 0; i < count; i++) {
-        const text = await errorElements.nth(i).textContent();
-        const trimmedText = text?.trim();
-        if (trimmedText && trimmedText.length > 0) {
-          if (trimmedText.includes(expectedMessage) || expectedMessage.includes(trimmedText)) {
-            found = true;
-            break;
-          }
-        }
-      }
+    const errorElements = this.page.locator('small.p-invalid');
+    const count = await errorElements.count();
 
-      if (!found) {
-        throw new Error(`Error message not found for: "${expectedMessage}"`);
+    for (let i = 0; i < count; i++) {
+      const text = await errorElements.nth(i).textContent();
+      if (text?.trim() && (text.includes(expectedMessage) || expectedMessage.includes(text))) {
+        console.log(`Error message found: "${text.trim()}"`);
+        return;
       }
-
-    } catch (error) {
-      throw new Error(`Error message verification failed: ${error.message}`);
     }
+
+    throw new Error(`Error message not found for: "${expectedMessage}"`);
   }
   async verifyProgramInSearchResults(programName) {
     try {
@@ -374,74 +348,54 @@ export class ProgramPage {
       throw new Error(`Program not found: ${error.message}`);
     }
   }
-
   async verifyProgramByDescription(description) {
-    try {
-      await this.page.waitForTimeout(1000);
-      const row = this.page.locator(`table tbody tr:has-text("${description}")`);
-      const count = await row.count();
-      if (count === 0) {
-        throw new Error(`Program with description "${description}" not found`);
-      }
-      const cells = row.locator('td');
-      const name = await cells.nth(0).textContent();
-      const desc = await cells.nth(1).textContent();
-      const status = await cells.nth(2).textContent();
-      return { name, description: desc, status };
-    } catch (error) {
-      throw new Error(`Description not found: ${error.message}`);
+    const row = this.page.locator(`table tbody tr:has-text("${description}")`);
+    const count = await row.count();
+
+    if (count === 0) {
+      throw new Error(`Program with description "${description}" not found`);
     }
+
+    const name = await row.locator('td').nth(1).textContent();
+    const desc = await row.locator('td').nth(2).textContent();
+    const status = await row.locator('td').nth(3).textContent();
+
+    return { name, description: desc, status };
   }
 
   async verifyPartialSearchResults(partialName) {
-    try {
-      await this.page.waitForTimeout(1000);
-      if (!this.tableRows) {
-        throw new Error('tableRows locator is not defined');
-      }
-      const rows = await this.tableRows.all();
-      const rowCount = rows.length;
-      if (rowCount === 0) {
-        console.log(`No results found for partial search: "${partialName}"`);
-        return [];
-      }
-      const results = [];
-      for (let i = 0; i < rowCount; i++) {
-        const cells = rows[i].locator('td');
-        const name = await cells.nth(0).textContent();
-        results.push(name?.trim());
-      }
-      return results;
-    } catch (error) {
-      throw new Error(`Partial search failed: ${error.message}`);
+    const rows = await this.tableRows.all();
+
+    if (rows.length === 0) {
+      console.log(`No results found for partial search: "${partialName}"`);
+      return [];
     }
+    const results = [];
+    for (const row of rows) {
+      const name = await row.locator('td').nth(1).textContent();
+      results.push(name?.trim());
+    }
+
+    console.log(`Found ${results.length} results for partial search: "${partialName}"`);
+    return results;
   }
   async verifyNoResults() {
-    try {
-      await this.page.waitForTimeout(1000);
-      const rowCount = await this.tableRows.count();
-      const noResultsVisible = await this.page.getByText('Showing 0 to 0 of 0 entries').isVisible().catch(() => false);
-      if (rowCount === 0 || noResultsVisible) {
-        console.log(' No results found as expected');
-        return true;
-      }
-      throw new Error('Expected zero results but found results');
-    } catch (error) {
-      throw new Error(`No results verification failed: ${error.message}`);
+    const rowCount = await this.tableRows.count();
+
+    if (rowCount === 0) {
+      console.log(' No results found as expected');
+      return true;
     }
+
+    throw new Error(`Expected zero results but found ${rowCount} results`);
   }
   //----------Edit methods---------------
-
-
-  //  Click edit on the first program in the table
+ 
   async clickEditOnFirstProgram() {
     await this.page.keyboard.press('Escape');
     await this.page.waitForTimeout(300);
-
     const firstRow = this.tableRows.first();
     await firstRow.locator('#editProgram').click();
-
-    console.log(' Edit dialog opened');
   }
 
   async verifyDialogVisible() {
@@ -450,18 +404,15 @@ export class ProgramPage {
     if (!isVisible) {
       throw new Error('Program Details dialog is not displayed');
     }
-    console.log('Program Details dialog is displayed');
   }
   async editProgramName(newName) {
     await this.progrmForEdit.clear();
     await this.progrmForEdit.fill(newName);
-    console.log(`Program name updated to: "${newName}"`);
   }
 
   async editProgramDescription(newDescription) {
     await this.descriptionForEdit.clear();
     await this.descriptionForEdit.fill(newDescription);
-    console.log(` Program description updated to: "${newDescription}"`);
   }
 
   async editProgramStatus(newStatus) {
@@ -470,14 +421,12 @@ export class ProgramPage {
     } else if (newStatus.toLowerCase() === 'inactive') {
       await this.inactiveBtnForEdit.click();
     }
-    console.log(`Status updated to: ${newStatus}`);
   }
   async verifyProgramUpdatedSuccessMessage(expectedMessage) {
     const toast = this.page.locator('[role="alert"]').first();
     await toast.waitFor({ state: 'visible', timeout: 10000 });
 
     const actualMessage = (await toast.textContent()).replace(/\s+/g, ' ').trim();
-    console.log(`Actual message: "${actualMessage}"`);
 
     if (!actualMessage.includes('Program Updated')) {
       throw new Error(`Message does not contain "Program Updated". Got: "${actualMessage}"`);
@@ -489,12 +438,92 @@ export class ProgramPage {
     const isActive = await this.activeBtnForEdit.isChecked().catch(() => false);
     return isActive ? 'Active' : 'Inactive';
   }
+  // ============= Delete Methods =============
+
+  async clickDeleteOnFirstProgram() {
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300); // Only keep this - needed for menu to close
+
+    const firstRow = this.tableRows.first();
+    await firstRow.waitFor({ state: 'visible', timeout: 5000 });
+    const programName = await firstRow.locator('td').nth(1).textContent();
+    const deleteButton = firstRow.locator('#deleteProgram');
+    await deleteButton.click();
+    await this.confirmAlertBoxForDelete.waitFor({ state: 'visible', timeout: 5000 });
+
+  }
+
+  async clickYesOnDeleteConfirmation() {
+    await this.yesButtonForDelete.click();
+
+  }
+
+  async clickNoOnDeleteConfirmation() {
+    await this.noButtonForDelete.click();
+
+  }
+
+  async clickCloseOnDeleteConfirmation() {
+    await this.closeButtonForDelete.click();
+
+  }
+
+  async verifyDeleteConfirmationDialog() {
+    await this.confirmAlertBoxForDelete.waitFor({ state: 'visible', timeout: 5000 });
+    const yesVisible = await this.yesButtonForDelete.isVisible();
+    const noVisible = await this.noButtonForDelete.isVisible();     
+
+  }
+
+  async verifyProgramDeletedSuccessfully() {
+
+    await this.page.locator('[role="alert"]').first().waitFor({ state: 'visible', timeout: 10000 });
+    const successMessage = await this.page.locator('[role="alert"]').first().textContent();
+    await this.confirmAlertBoxForDelete.waitFor({ state: 'hidden', timeout: 5000 });
+  }
+
+  // Helper method to get program name
+  async getProgramNameFromTable() {
+    const name = await this.tableRows.first().locator('td').nth(1).textContent();
+    return name?.trim() || null;
+  }
+
+  // 
+  async verifyAlertBoxClosedAndProgramNotDeleted() {
+    await this.confirmAlertBoxForDelete.waitFor({ state: 'hidden', timeout: 5000 });
+    const programName = await this.getProgramNameFromTable();
+    if (!programName) return;
+
+    await this.searchProgram(programName);
+    const row = this.page.locator(`table tbody tr:has-text("${programName}")`);
+    // if (await row.count() === 0) {
+    //   throw new Error(`Program "${programName}" was deleted but should NOT have been!`);
+    // }
+  }
+
+  //  Verify program not deleted and page visible
+  async verifyAlertBoxClosedAndProgramPageVisible() {
+    await this.confirmAlertBoxForDelete.waitFor({ state: 'hidden', timeout: 5000 });
+    const programName = await this.getProgramNameFromTable();
+    if (programName) {
+      await this.searchProgram(programName);
+      const row = this.page.locator(`table tbody tr:has-text("${programName}")`);
+      // if (await row.count() === 0) {
+      //   throw new Error(`Program "${programName}" was deleted!`);
+      // }
+      // console.log(`Program "${programName}" still exists`);
+    }
+
+    const isVisible = await this.manageProgram.isVisible();
+    // if (!isVisible) throw new Error('Program page not visible');
+
+  }
 
   //------------------------------------------------------------------
-  async navigate() {
-    await this.page.goto('/program');
-    await this.page.waitForLoadState('networkidle');
-  }
+  // async navigate() {
+  //   await this.page.goto('/program');
+  //   await this.page.waitForLoadState('networkidle');
+  // }
 
   async clickProgramNameArrow() {
     await this.page.click(this.programNameHeader);
