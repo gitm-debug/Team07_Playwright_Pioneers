@@ -40,7 +40,7 @@ export default defineConfig({
       timeout: 120000,
     },
     {
-      name: 'chromium-auth',
+      name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/user.json',
@@ -49,7 +49,7 @@ export default defineConfig({
       grep: /@auth/,
     },
     {
-      name: 'chromium-noauth',
+      name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         storageState: undefined,
@@ -58,7 +58,7 @@ export default defineConfig({
     },
 
     {
-      name: 'webkit-auth',
+      name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
         storageState: 'playwright/.auth/user.json',
@@ -67,7 +67,7 @@ export default defineConfig({
       grep: /@auth/,
     },
     {
-      name: 'webkit-noauth',
+      name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
         storageState: undefined,
