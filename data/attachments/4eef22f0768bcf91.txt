@@ -1,6 +1,0 @@
- Searching by partial: "Dock"
-Context set: currentSearchTerm = Dock
-Context set: currentSearchType = partial
-Verifying search results for: "partial"
-Found 4 results for partial search: "Dock"
-Programs verified by partial name: "Dock"

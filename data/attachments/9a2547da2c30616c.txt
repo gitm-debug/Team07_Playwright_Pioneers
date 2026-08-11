@@ -1,0 +1,5 @@
+ Searching by description: ""
+Context set: currentSearchTerm = 
+Context set: currentSearchType = description
+Verifying search results for: "description"
+Program verified by description: ""
