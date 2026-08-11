@@ -1,0 +1,6 @@
+Context set: expectedMessage = Program created successfully
+Context set: currentProgramName = azure-nnnn
+Context set: currentProgramData = [object Object]
+Context set: testType = positive
+Program "azure-nnnn" created and stored!
+Current program count in storage: 2

@@ -1,3 +1,0 @@
-  ➜ [2026-08-11T04:40:32.295Z] [STEP] Admin is on home page after login
-  ➜ [2026-08-11T04:40:34.917Z] [STEP] Admin clicks Batch on the navigation bar
-[2026-08-11T04:40:36.035Z] [INFO] Batch created and stored: {"id":"batch_1786423236035_9qgk1m9","programName":"azure-nna","batchNameSuffix":"111","status":"active","noOfClasses":"5","createdAt":"2026-08-11T04:40:36.035Z"}
