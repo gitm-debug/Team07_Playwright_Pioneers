@@ -552,10 +552,10 @@ export class ProgramPage {
   }
 
   //------------------------------------------------------------------
-  // async navigate() {
-  //   await this.page.goto('/program');
-  //   await this.page.waitForLoadState('networkidle');
-  // }
+  async navigate() {
+    await this.page.goto('/program');
+    await this.page.waitForLoadState('networkidle');
+  }
 
   async clickProgramNameArrow() {
     await this.programNameHeader.click();
