@@ -12,7 +12,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 2,
   workers: 1,
@@ -52,6 +52,7 @@ export default defineConfig({
       name: 'chromium-noauth',
       use: {
         ...devices['Desktop Chrome'],
+        storageState: undefined,
       },
       grep: /@noauth/,
       },

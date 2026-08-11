@@ -87,3 +87,54 @@ Feature: Program Page Verification
   Scenario: Search by Non-Existent Program Name
     When Admin enters "NonExistentProgram123" in the search box
     Then There should be zero results
+
+    @Edit
+    Scenario: Edit icon functionality
+    When Admin clicks on Edit option for a particular program
+    Then Admin should see  Edit Program Details dialog for program
+
+    @Edit
+    Scenario Outline: Edit program field
+    When Admin clicks on Edit option, edits the "<field>" and clicks on Save button
+    Then Admin should see "Successful Program Updated" message
+
+    Examples:
+      | field        |
+      | name         |
+      | description  |     
+     
+    @Edit
+    Scenario: Verify edited Program details
+    When Admin searches with updated program name
+    Then Admin verifies that the details are correctly updated     
+
+    @progrmSort
+    Scenario: Sorting of Program name in Descending order
+    Given Admin is in program page where Program names are sorted in ascending order
+    When Admin clicks on Arrow next to program Name
+    Then Admin should see the Program Name is sorted in Descending order
+
+     @progrmSort
+  Scenario: Sorting of Program Description in Ascending order
+    When Admin clicks on Arrow next to Program Description
+    Then Admin should see the Program Description is sorted in Ascending order
+
+   @progrmSort
+  Scenario: Sorting of Program Description in Descending order
+    Given Admin is in program page where Program descriptions are sorted in ascending order
+    When Admin clicks on Arrow next to Program Description
+    Then Admin should see the Program Description is sorted in Descending order
+
+ @progrmSort
+  Scenario: Sorting of Program status in Ascending order
+    When Admin clicks on Arrow next to Program status
+    Then Admin should see the Program status sorted in Ascending order
+   @progrmSort
+  Scenario: Sorting of Program status in Descending order
+    Given Admin is in program page where Program status are sorted in ascending order
+    When Admin clicks on Arrow next to Program status
+    Then Admin should see the Program status sorted in Descending order
+
+
+     
+

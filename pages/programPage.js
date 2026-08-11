@@ -14,8 +14,8 @@ export class ProgramPage {
     this.footerMsg = page.locator(".p-d-flex.p-ai-center.p-jc-between.ng-star-inserted")
     this.paginationMsg = page.locator(".p-paginator-current.ng-star-inserted")
     this.programDetailsDialog = page.getByText('Program Details');
-    this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');
-    this.dialogTitle = page.locator('span.p-dialog-title.ng-tns-c81-8.ng-star-inserted');
+    this.dialog = page.locator('.MuiDialog-root, .modal, [role="dialog"]');    
+    this.dialogTitle = page.getByText('Program Details');
     this.nameText = page.getByLabel('Name*')
     this.nameField = page.locator('#programName');
     this.descriptionText = page.getByLabel('Description');
@@ -31,9 +31,18 @@ export class ProgramPage {
     this.errorMessage = page.locator('small.p-invalid'); // <small class="p-invalid">   
     this.tableRows = page.locator('table tbody tr');
     //-----------
-    this.programNameHeader = 'th[psortablecolumn="programName"]';
-    this.programDescriptionHeader = 'th[psortablecolumn="programDescription"]';
-    this.programStatusHeader = 'th[psortablecolumn="programStatus"]';
+    this.programNameHeader = page.locator('th[psortablecolumn="programName"]');
+    this.programDescriptionHeader = page.locator('th[psortablecolumn="programDescription"]');
+    this.programStatusHeader = page.locator('th[psortablecolumn="programStatus"]');
+    //Edit
+    this.editDialogue = page.getByText('Program Details');
+    this.progrmForEdit = page.locator('#programName');
+    this.descriptionForEdit = page.locator('#programDescription');
+    this.activeBtnForEdit = page.locator(".p-radiobutton-box.p-highlight");
+    this.inactiveBtnForEdit = page.locator("//div[@class='p-radiobutton-box']");
+    this.cancelForEdit = page.getByText('Cancel');
+    this.saveBtn = page.getByText('Save');
+    this.successMessage = page.locator('.p-toast-detail, .p-toast-summary, .p-toast-message-text, [role="alert"]');
   }
   async navigateToProgramPage() {
     await this.programMenuBar.click();
@@ -131,7 +140,6 @@ export class ProgramPage {
 
   async validateUIElements(uiElements) {
     const errors = [];
-
     const methodMap = {
       "Manage Program heading": this.isHeadingVisible.bind(this),
       "Add New Program menu": this.isAddNewProgramVisible.bind(this),
@@ -153,18 +161,14 @@ export class ProgramPage {
         errors.push(`Unknown UI element: ${name}`);
         continue;
       }
-
       const result = await method();
       if (!result) {
         errors.push(`UI element '${name}' failed validation`);
       }
     }
-
     if (errors.length > 0) {
       throw new Error("UI Validation Failed:\n" + errors.join("\n"));
     }
-
-
   }
   // Add New Program UI Elements validation methods
   async clickAddNewProgram() {
@@ -425,22 +429,86 @@ export class ProgramPage {
       throw new Error(`No results verification failed: ${error.message}`);
     }
   }
+  //----------Edit methods---------------
 
+
+  //  Click edit on the first program in the table
+  async clickEditOnFirstProgram() {
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300);
+
+    const firstRow = this.tableRows.first();
+    await firstRow.locator('#editProgram').click();
+
+    console.log(' Edit dialog opened');
+  }
+
+  async verifyDialogVisible() {
+    await this.editDialogue.waitFor({ state: 'visible', timeout: 5000 });
+    const isVisible = await this.editDialogue.isVisible();
+    if (!isVisible) {
+      throw new Error('Program Details dialog is not displayed');
+    }
+    console.log('Program Details dialog is displayed');
+  }
+  async editProgramName(newName) {
+    await this.progrmForEdit.clear();
+    await this.progrmForEdit.fill(newName);
+    console.log(`Program name updated to: "${newName}"`);
+  }
+
+  async editProgramDescription(newDescription) {
+    await this.descriptionForEdit.clear();
+    await this.descriptionForEdit.fill(newDescription);
+    console.log(` Program description updated to: "${newDescription}"`);
+  }
+
+  async editProgramStatus(newStatus) {
+    if (newStatus.toLowerCase() === 'active') {
+      await this.activeBtnForEdit.click();
+    } else if (newStatus.toLowerCase() === 'inactive') {
+      await this.inactiveBtnForEdit.click();
+    }
+    console.log(`Status updated to: ${newStatus}`);
+  }
+  async verifyProgramUpdatedSuccessMessage(expectedMessage) {
+    const toast = this.page.locator('[role="alert"]').first();
+    await toast.waitFor({ state: 'visible', timeout: 10000 });
+
+    const actualMessage = (await toast.textContent()).replace(/\s+/g, ' ').trim();
+    console.log(`Actual message: "${actualMessage}"`);
+
+    if (!actualMessage.includes('Program Updated')) {
+      throw new Error(`Message does not contain "Program Updated". Got: "${actualMessage}"`);
+    }
+
+    console.log(`Success message verified: "${actualMessage}"`);
+  }
+  async getCurrentStatus() {
+    const isActive = await this.activeBtnForEdit.isChecked().catch(() => false);
+    return isActive ? 'Active' : 'Inactive';
+  }
+
+  //------------------------------------------------------------------
   async navigate() {
     await this.page.goto('/program');
     await this.page.waitForLoadState('networkidle');
   }
 
   async clickProgramNameArrow() {
-    await this.page.click(this.programNameHeader);
+    await this.programNameHeader.click();
   }
 
   async clickProgramDescriptionArrow() {
-    await this.page.click(this.programDescriptionHeader);
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300);
+    await this.programDescriptionHeader.click();
   }
 
   async clickProgramStatusArrow() {
-    await this.page.click(this.programStatusHeader);
+    await this.page.keyboard.press('Escape');
+    await this.page.waitForTimeout(300);
+    await this.programStatusHeader.click();
   }
 
   async getProgramNames() {

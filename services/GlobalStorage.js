@@ -47,16 +47,12 @@ class GlobalStorage {
 
   getCount() {
     return this.programs.length;
-  }
-
-  getProgramForEdit() {
-    return this.programs[0] || null;
-  }
+  }  
 
   getProgramForDelete() {
     return this.programs[1] || this.programs[0] || null;
   }
-
+  
   getProgramForBatch() {
     if (!this.programs) return null;
     return this.programs[2] || this.programs[0] || null;
@@ -66,24 +62,16 @@ class GlobalStorage {
     return this.programs[this.programs.length - 1] || null;
   }
 
-  getLastProgramName() {
-    return this.currentProgram?.name || this.getLastProgram()?.name || null;
-  }
+  // getLastProgramName() {
+  //   return this.currentProgram?.name || this.getLastProgram()?.name || null;
+  // }  
 
-  getLastProgramId() {
-    return this.currentProgram?.id || this.getLastProgram()?.id || null;
-  }
-
-  getProgramByName(name) {
-    return this.programs.find(p => p.name === name) || null;
-  }
+  // getProgramByName(name) {
+  //   return this.programs.find(p => p.name === name) || null;
+  // }
 
   getAllPrograms() {
     return this.programs;
-  }
-
-  hasProgram(name) {
-    return this.programs.some(p => p.name === name);
   }
 
   setContext(key, value) {

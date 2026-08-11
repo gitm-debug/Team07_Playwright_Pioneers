@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "scenario": "valid credentials",
+      "email": "valid@email.com",
+      "password": "pass123",
+      "role": "Admin",
+      "expected": "home page"
+    },
+    {
+      "scenario": "special chars in username",
+      "email": "!@#$%^&*()",
+      "password": "pass123",
+      "role": "Admin",
+      "expected": "Invalid username and password please try again"
+    },
+    {
+      "scenario": "empty username",
+      "email": "",
+      "password": "pass123",
+      "role": "Admin",
+      "expected": "Please enter your user name"
+    },
+    {
+      "scenario": "empty password",
+      "email": "valid@email.com",
+      "password": "",
+      "role": "Admin",
+      "expected": "Please enter your password"
+    },
+    {
+      "scenario": "wrong password",
+      "email": "valid@email.com",
+      "password": "wrong",
+      "role": "Admin",
+      "expected": "Invalid username and password"
+    },
+    {
+      "scenario": "no role selected",
+      "email": "valid@email.com",
+      "password": "pass123",
+      "role": "",
+      "expected": "Please select your Role"
+    },
+    {
+      "scenario": "invalid role",
+      "email": "valid@email.com",
+      "password": "pass123",
+      "role": "Staff",
+      "expected": "Please select correct role"
+    },
+    {
+      "scenario": "using keyboard",
+      "email": "valid@email.com",
+      "password": "pass123",
+      "role": "Admin",
+      "expected": "home page"
+    },
+    {
+      "scenario": "using mouse",
+      "email": "valid@email.com",
+      "password": "pass123",
+      "role": "Admin",
+      "expected": "home page"
+    }
+  ]
+}
