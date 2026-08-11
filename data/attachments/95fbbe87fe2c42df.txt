@@ -1,5 +1,0 @@
- Edit dialog opened
-Program name updated to: "Updatedkklrkv"
-Context set: updatedProgramName = Updatedkklrkv
-Actual message: "SuccessfulProgram Updated"
-Success message verified: "SuccessfulProgram Updated"

@@ -1,0 +1,5 @@
+ Searching by name: "azure-nnzna"
+Context set: currentSearchTerm = azure-nnzna
+Context set: currentSearchType = name
+Verifying search results for: "name"
+Program verified by name: "azure-nnzna"

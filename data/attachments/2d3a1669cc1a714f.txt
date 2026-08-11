@@ -1,0 +1,2 @@
+  ➜ [2026-08-11T15:02:07.560Z] [STEP] Admin is on home page after login
+  ➜ [2026-08-11T15:02:10.408Z] [STEP] Admin clicks Batch on the navigation bar
