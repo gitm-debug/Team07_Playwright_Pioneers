@@ -55,6 +55,24 @@ export default defineConfig({
         storageState: undefined,
       },
       grep: /@noauth/,
+    },
+
+    {
+      name: 'webkit-auth',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: 'playwright/.auth/user.json',
       },
+      dependencies: ['setup-user'],
+      grep: /@auth/,
+    },
+    {
+      name: 'webkit-noauth',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: undefined,
+      },
+      grep: /@noauth/,
+    },
   ],
 });
