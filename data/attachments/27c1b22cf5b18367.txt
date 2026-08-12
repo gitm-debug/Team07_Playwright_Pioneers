@@ -1,7 +1,0 @@
- Storage is empty, checking table...
-Re-added program from table: "Docker-xyz"
- Searching by name: "Docker-xyz"
-Context set: currentSearchTerm = Docker-xyz
-Context set: currentSearchType = name
-Verifying search results for: "name"
-Program verified by name: "Docker-xyz"

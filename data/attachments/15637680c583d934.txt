@@ -1,0 +1,7 @@
+ Storage is empty, checking table...
+Re-added program from table: "Programimhvci"
+ Searching by name: "Programimhvci"
+Context set: currentSearchTerm = Programimhvci
+Context set: currentSearchType = name
+Verifying search results for: "name"
+Program verified by name: "Programimhvci"
