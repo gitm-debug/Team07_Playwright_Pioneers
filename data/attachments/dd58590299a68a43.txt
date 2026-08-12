@@ -1,6 +1,0 @@
- Searching by partial: "Prog"
-Context set: currentSearchTerm = Prog
-Context set: currentSearchType = partial
-Verifying search results for: "partial"
-Found 9 results for partial search: "Prog"
-Programs verified by partial name: "Prog"

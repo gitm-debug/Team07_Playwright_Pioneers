@@ -1,0 +1,4 @@
+  ➜ [2026-08-12T02:44:08.442Z] [STEP] Clicking delete button
+  ➜ [2026-08-12T02:44:09.486Z] [STEP] Checking if confirmation dialog is visible
+  ➜ [2026-08-12T02:44:09.494Z] [STEP] Clicking Yes button on confirmation dialog
+  ➜ [2026-08-12T02:44:11.544Z] [STEP] Getting toast message
