@@ -1,2 +1,0 @@
-Context set: updatedProgramDescription = Updated xlokti
-Success message verified: "SuccessfulProgram Updated"

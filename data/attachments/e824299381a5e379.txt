@@ -1,7 +1,0 @@
-Context set: expectedMessage = Program Created Successfully
-Context set: currentProgramName = Docker-xyz
-Context set: currentProgramData = [object Object]
-Context set: testType = positive
-Success message verified: "Program Created Successfully"
-Program "Docker-xyz" created and stored!
-Current program count in storage: 2
