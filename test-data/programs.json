@@ -1,21 +1,21 @@
 {
   "Programs": {
     "validProgram1": {
-      "name": "cobal-rfw",
+      "name": "cobal-xyz",
       "description": "Intro to Java",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram2": {
-      "name": "Docker-rfw",
+      "name": "Docker-xyz",
       "description": "Azure Cloud",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
       "testType": "positive"
     },
     "validProgram3": {
-      "name": "python-rfw",
+      "name": "python-xyz",
       "description": "DevOps",
       "status": "Active",
       "expectedMessage": "Program Created Successfully",
