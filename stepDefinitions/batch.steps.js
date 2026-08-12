@@ -519,7 +519,7 @@ Then('Admin should see the Batch Status is sorted in Descending order', async ({
 
 // -----Manage batch - search bar ----------------//
 When('Admin search batch in the search box by {string}', async ({batchFixture, Page}, searchType) => {
-    await Page.pause();
+    //await Page.pause();
     if(searchType === 'batchName') {
         const batch = globalStorage.getLastBatch();
 
